@@ -1,6 +1,5 @@
 pandas
 geopandas
-gpdvega
-altair
 html5lib
 beautifulsoup4
+bokeh
