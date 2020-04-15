@@ -3,3 +3,4 @@ geopandas
 html5lib
 beautifulsoup4
 bokeh
+lxml
