@@ -3,7 +3,6 @@
 import glob
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import logging
 from bokeh.io import show, save, output_file
 from bokeh.models import (CDSView, ColorBar, ColumnDataSource,
