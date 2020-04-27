@@ -119,12 +119,15 @@ def plot_line(ts_data):
     p.yaxis.major_label_text_font_size = "25pt"
 
 
-    for zip, zip_df in ts_data.groupby('City'):
-        source = ColumnDataSource(zip_df)
+    for city, city_df in ts_data.groupby('City'):
+        source = ColumnDataSource(city_df)
+        color = 'black' if city == 'Rockville' else 'grey'
+        lw = 4 if city == 'Rockville' else 2
+        alpha = 0.9 if city == 'Rocville' else 0.4
         p.line(x='Date',
                 y='Cases',
-                color = 'grey',
-                line_width=4,
+                color = color,
+                line_width=lw,
                 line_alpha=0.8,
                 source=source)
         #add tool tips
