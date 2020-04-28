@@ -22,7 +22,7 @@ def plot_cases_map(data):
                             low=data.per_population.min(), 
                             high=data.per_population.max())
 
-    p = figure(title = 'COVID19 in Maryland\n(Cases per 1,000 people)', 
+    p = figure(title = 'COVID19 in Maryland\n(Cases per 1< people)', 
             plot_height = 400,
             plot_width = 950, 
             tools = "box_zoom, reset")
@@ -157,7 +157,7 @@ def main():
         .pipe(lambda d: d[d.Date==d.Date.max()]) \
         .assign(Cases = lambda d: d.Cases.fillna(0)) \
         .pipe(lambda d: d[~pd.isnull(d.geometry)]) \
-        .assign(per_population = lambda d: d.Cases / d.Population.astype(int) * 1000)
+        .assign(per_population = lambda d: d.Cases / d.Population.astype(int) * 1e6)
     today = str(total_case_data.Date.astype(str).unique()[0])
     logger.info('Plotting date: %s' %today)
 
