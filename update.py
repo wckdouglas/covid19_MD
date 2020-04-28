@@ -22,7 +22,7 @@ def plot_cases_map(data):
                             low=data.per_population.min(), 
                             high=data.per_population.max())
 
-    p = figure(title = 'COVID19 in Maryland\n(Cases per 1< people)', 
+    p = figure(title = 'COVID19 in Maryland\n(Cases per 1M people)', 
             plot_height = 400,
             plot_width = 950, 
             tools = "box_zoom, reset")
