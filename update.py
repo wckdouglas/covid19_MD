@@ -57,13 +57,13 @@ def plot_cases_map(data):
     return p
 
 
-def plot_new_cases_map(per_day_increase_data):
+def plot_new_cases_map(per_day_increase_data, today):
     geosource = GeoJSONDataSource(geojson = per_day_increase_data.to_json())
     color_mapper = LinearColorMapper(palette=Inferno256, 
                             low=per_day_increase_data.increase.min(), 
                             high=per_day_increase_data.increase.max())
 
-    p = figure(title = 'New COVID19 cases in Maryland', 
+    p = figure(title = 'New COVID19 cases in Maryland ({})'.format(today), 
             plot_height = 400,
             plot_width = 950, 
             tools = "box_zoom, reset")
@@ -190,7 +190,7 @@ def main():
     logger.info('Time series date from %s to %s' %(first_day,today))
     
     p1 = plot_cases_map(total_case_data)
-    p2 = plot_new_cases_map(per_day_increase_data)
+    p2 = plot_new_cases_map(per_day_increase_data, today)
     p3 = plot_line(ts_data)
 
     p = column(p1, p2, p3)
