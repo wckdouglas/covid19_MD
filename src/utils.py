@@ -41,11 +41,11 @@ class Data():
 
     def read_zip_COVID(self):
         covid_data = {}
-        for csv in glob.glob(self.data_path + '/*csv'):
+        for i, csv in enumerate(glob.glob(self.data_path + '/*.csv')):
             date = os.path.basename(csv.replace('.csv',''))
             covid_data[date] = pd.read_csv(csv, names = ['Zip','Cases']) \
                 .assign(Cases = lambda d: d.Cases.str.replace(' Cases','').astype(int))
-        logger.info('Loaded daily COVID cases')
+        logger.info('Loaded daily COVID cases (%i days)' %(i+1))
         return pd.concat(date_data.assign(Date = date) for date, date_data in covid_data.items()) \
             .assign(Date = lambda d: pd.to_datetime(d.Date, format = '%Y-%m-%d'))
 
