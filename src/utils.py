@@ -26,14 +26,22 @@ class Data():
         self.zip_covid = self.read_zip_COVID()
         self.zip_population = self.read_population()
         
+    def download_zipfile(self, zipfile):
+        with open(zipfile, 'wb') as out:
+            downloaded = requests.get(self.geo_shape_url)
+            out.write(downloaded.content)
+        logger.info('Downloaded %s' %zipfile)
+        os.system('unzip %s' %zipfile)
+        logger.info('unzipped %s' %zipfile)
+
+        
     def read_map(self):
         zipfile = self.data_path + '/tl_2019_us_zcta510.zip'
-        if not os.path.isfile(zipfile):
-            with open(zipfile, 'wb') as out:
-                downloaded = requests.get(self.geo_shape_url)
-                out.write(downloaded.content)
-                logger.info('Downloaded %s' %zipfile)
-        out = gpd.read_file('zip://' + zipfile) \
+        shapefile = zipfile.replace('.zip','.shp')
+        if not os.path.isfile(shapefile):
+            self.download_zipfile(zipfile)
+        #out = gpd.read_file('zip://' + zipfile) \
+        out = gpd.read_file(shapefile) \
             .rename(columns = {'ZCTA5CE10':'Zip'}) \
             .assign(Zip = lambda d: d.Zip.astype(int))
         logger.info('Loaded geo shape')
