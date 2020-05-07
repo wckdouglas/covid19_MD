@@ -13,6 +13,7 @@ from bokeh.palettes import brewer
 from bokeh.palettes import Inferno256
 from bokeh.plotting import figure
 from src.utils import Data, markdown_html
+from src.plotting import plot_line
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('Update')
 
@@ -99,45 +100,6 @@ def plot_new_cases_map(per_day_increase_data, today):
     logger.info('Plotted daily new cases map')
     return p
 
-
-def plot_line(ts_data):
-    p = figure(x_axis_type="datetime", 
-                plot_width = 950, 
-                plot_height = 400, 
-                x_axis_label='Date',
-                y_axis_label = 'Total Cases',
-                title = 'Daily cases by city',
-                tools='box_zoom,reset')
-    p.xgrid.grid_line_color = None
-    p.ygrid.grid_line_color = None
-    p.title.text_font_size = '25pt'
-    p.xaxis.axis_label = 'Date'
-    p.yaxis.axis_label = 'Total Cases'
-    p.xaxis.axis_label_text_font_size = "25pt"
-    p.xaxis.major_label_text_font_size = "25pt"
-    p.yaxis.axis_label_text_font_size = "25pt"
-    p.yaxis.major_label_text_font_size = "25pt"
-
-
-    for city, city_df in ts_data.groupby('City'):
-        source = ColumnDataSource(city_df)
-        color = 'black' if city == 'Rockville' else 'grey'
-        lw = 4 if city == 'Rockville' else 2
-        alpha = 0.9 if city == 'Rocville' else 0.4
-        p.line(x='Date',
-                y='Cases',
-                color = color,
-                line_width=lw,
-                line_alpha=0.8,
-                source=source)
-        #add tool tips
-        hover = HoverTool(tooltips =[
-                        ('Date','@formatted_date'),
-                        ('Cases','@Cases'),
-                        ('City', '@City')])
-    p.add_tools(hover)
-    logger.info('Plotted line plot')
-    return p
 
 
 def main():
