@@ -44,7 +44,7 @@ def plot_cases_map(data):
                                     ('Zip code','@Zip'),
                                     ('Population','@Population'),
                                     ('Cases', '@Cases'),
-                                    ('Cases/1k population', '@per_population')]))
+                                    ('Cases/1M population', '@per_population')]))
     #color bar
     color_bar = ColorBar(color_mapper = color_mapper, 
                         label_standoff = 8,
