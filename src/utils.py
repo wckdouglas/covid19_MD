@@ -26,14 +26,22 @@ class Data():
         self.zip_covid = self.read_zip_COVID()
         self.zip_population = self.read_population()
         
+    def download_zipfile(self, zipfile):
+        with open(zipfile, 'wb') as out:
+            downloaded = requests.get(self.geo_shape_url)
+            out.write(downloaded.content)
+        logger.info('Downloaded %s' %zipfile)
+        os.system('unzip %s' %zipfile)
+        logger.info('unzipped %s' %zipfile)
+
+        
     def read_map(self):
         zipfile = self.data_path + '/tl_2019_us_zcta510.zip'
-        if not os.path.isfile(zipfile):
-            with open(zipfile, 'wb') as out:
-                downloaded = requests.get(self.geo_shape_url)
-                out.write(downloaded.content)
-                logger.info('Downloaded %s' %zipfile)
-        out = gpd.read_file('zip://' + zipfile) \
+        shapefile = zipfile.replace('.zip','.shp')
+        if not os.path.isfile(shapefile):
+            self.download_zipfile(zipfile)
+        #out = gpd.read_file('zip://' + zipfile) \
+        out = gpd.read_file(shapefile) \
             .rename(columns = {'ZCTA5CE10':'Zip'}) \
             .assign(Zip = lambda d: d.Zip.astype(int))
         logger.info('Loaded geo shape')
@@ -41,11 +49,11 @@ class Data():
 
     def read_zip_COVID(self):
         covid_data = {}
-        for csv in glob.glob(self.data_path + '/*csv'):
+        for i, csv in enumerate(glob.glob(self.data_path + '/*.csv')):
             date = os.path.basename(csv.replace('.csv',''))
             covid_data[date] = pd.read_csv(csv, names = ['Zip','Cases']) \
                 .assign(Cases = lambda d: d.Cases.str.replace(' Cases','').astype(int))
-        logger.info('Loaded daily COVID cases')
+        logger.info('Loaded daily COVID cases (%i days)' %(i+1))
         return pd.concat(date_data.assign(Date = date) for date, date_data in covid_data.items()) \
             .assign(Date = lambda d: pd.to_datetime(d.Date, format = '%Y-%m-%d'))
 
