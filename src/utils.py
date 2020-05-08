@@ -100,3 +100,5 @@ def markdown_html(html_file, out_file):
                 outline += 1
                 print(line.strip(), file = out_html)
     logger.info('Written %i lines from %i lines to %s' %(outline, inline, out_file))
+
+
