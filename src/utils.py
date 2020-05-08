@@ -51,7 +51,7 @@ class Data():
         covid_data = {}
         for i, csv in enumerate(glob.glob(self.data_path + '/*.csv')):
             date = os.path.basename(csv.replace('.csv',''))
-            covid_data[date] = pd.read_csv(csv, names = ['Zip','Cases']) \
+            covid_data[date] = pd.read_csv(csv, names = ['Zip','Cases'],sep='\t') \
                 .assign(Cases = lambda d: d.Cases.str.replace(' Cases','').astype(int))
         logger.info('Loaded daily COVID cases (%i days)' %(i+1))
         return pd.concat(date_data.assign(Date = date) for date, date_data in covid_data.items()) \
