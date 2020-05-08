@@ -50,7 +50,7 @@ class Data():
     def read_zip_COVID(self):
         covid_data = {}
         for i, csv in enumerate(glob.glob(self.data_path + '/*.tsv')):
-            date = os.path.basename(csv.replace('.csv',''))
+            date = os.path.basename(csv.replace('.tsv',''))
             covid_data[date] = pd.read_csv(csv, names = ['Zip','Cases'],sep='\t') \
                 .assign(Cases = lambda d: d.Cases.str.replace(' Cases','').astype(int))
         logger.info('Loaded daily COVID cases (%i days)' %(i+1))
