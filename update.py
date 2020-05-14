@@ -9,7 +9,7 @@ from bokeh.models import (CDSView, ColorBar, ColumnDataSource,
                           LinearColorMapper, Slider, BasicTicker)
 from bokeh.layouts import column, row, widgetbox
 from bokeh.palettes import brewer
-from bokeh.palettes import Inferno256
+from bokeh.palettes import Inferno256, Viridis256
 from bokeh.plotting import figure
 from src.utils import Data, markdown_html
 from src.plotting import plot_line
@@ -18,7 +18,7 @@ logger = logging.getLogger('Update')
 
 def plot_cases_map(data):
     geosource = GeoJSONDataSource(geojson = data.drop('Date', axis=1).to_json())
-    color_mapper = LinearColorMapper(palette=Inferno256, 
+    color_mapper = LinearColorMapper(palette=Viridis256, 
                             low=data.per_population.min(), 
                             high=data.per_population.max())
 
@@ -59,7 +59,7 @@ def plot_cases_map(data):
 
 def plot_new_cases_map(per_day_increase_data, today):
     geosource = GeoJSONDataSource(geojson = per_day_increase_data.to_json())
-    color_mapper = LinearColorMapper(palette=Inferno256, 
+    color_mapper = LinearColorMapper(palette=Viridis256, 
                             low=per_day_increase_data.increase.min(), 
                             high=per_day_increase_data.increase.max())
 
