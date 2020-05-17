@@ -5,7 +5,6 @@ from bokeh.layouts import column, row, widgetbox
 from bokeh.palettes import brewer
 from bokeh.palettes import Inferno256
 from bokeh.plotting import figure
-import panel as pn
 import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('Interactive plots')
