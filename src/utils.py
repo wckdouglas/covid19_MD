@@ -1,10 +1,11 @@
-import pandas as pd
-import geopandas as gpd
 import glob
 import os
-from bs4 import BeautifulSoup
 import requests
 import logging
+from bs4 import BeautifulSoup
+import numpy as np
+import pandas as pd
+import geopandas as gpd
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('Data collector')
 
@@ -102,3 +103,52 @@ def markdown_html(html_file, out_file):
     logger.info('Written %i lines from %i lines to %s' %(outline, inline, out_file))
 
 
+def get_data():
+    maryland = Data(state='MD')
+    data = maryland.geo\
+        .merge(maryland.zip_map, on ='Zip', how = 'right')\
+        .merge(maryland.zip_covid, on ='Zip', how ='left')\
+        .merge(maryland.zip_population.assign(Zip = lambda d: d.Zip.astype(int)), on ='Zip') \
+        .assign(Date = lambda d: d.Date.fillna(d.Date.max())) \
+        .filter(['Zip','City','State','Cases','Date','geometry', 'Population']) 
+
+    total_case_data = data \
+        .pipe(lambda d: d[d.Date==d.Date.max()]) \
+        .assign(Cases = lambda d: d.Cases.fillna(0)) \
+        .pipe(lambda d: d[~pd.isnull(d.geometry)]) \
+        .assign(per_population = lambda d: d.Cases / d.Population.astype(int) * 1e6)
+    today = str(total_case_data.Date.astype(str).unique()[0])
+
+    per_day_increase_data =  data \
+        .groupby(['Zip'], as_index=False)\
+        .apply(lambda d: d.nlargest(2, 'Date') \
+                        .assign(increase = lambda d: d.Cases.max() - d.Cases.min()) \
+                        .assign(increase = lambda d: np.where(pd.isnull(d.increase), d.Cases, d.increase))\
+                        .assign(increase = lambda d: d.increase.fillna(0))\
+                        .pipe(lambda d: d[d.Date == d.Date.max()])) \
+        .pipe(lambda d: d[~pd.isnull(d.geometry)]) \
+        .assign(per_population = lambda d: d.increase / d.Population.astype(int) * 1e6) \
+        .assign(Date = lambda d: d.Date.astype(str))
+
+    ts_data = maryland.zip_covid\
+        .merge(maryland.zip_map.filter(['Zip','City']), on = 'Zip') \
+        .groupby(['Zip','City'], as_index=False)\
+        .apply(lambda d: d.sort_values('Date')  \
+        .assign(Cases = lambda d: d.Cases.fillna(method='ffill', axis=0)\
+        .fillna(0))) \
+        .reset_index(drop=True) \
+        .assign(formatted_date = lambda d: d.Date.astype(str)) 
+    ts_data_file = 'data/ts.csv'
+    ts_data.to_csv(ts_data_file, index=False)
+    logger.info('Written %s' %ts_data_file)
+
+    map_df = total_case_data\
+        .merge(per_day_increase_data.filter(['Zip','increase']))\
+        .assign(per_population_increase = lambda d: 1e6*d['increase'].astype(int)/d.Population.astype(int))
+    geo_data = "data/MD.geojson"
+    map_df.to_file(geo_data, driver='GeoJSON')
+    logger.info('Written %s' %geo_data)
+
+
+if __name__ == '__main__':
+    get_data()
