@@ -3,7 +3,7 @@ from bokeh.models import (ColorBar, ColumnDataSource, CustomJS,
                           LinearColorMapper, Slider, BasicTicker)
 from bokeh.layouts import column, row, widgetbox
 from bokeh.palettes import brewer
-from bokeh.palettes import Inferno256
+from bokeh.palettes import Viridis256
 from bokeh.plotting import figure
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -15,7 +15,7 @@ def plot_map(map_df):
     geosource = GeoJSONDataSource(geojson = map_df.drop('Date', axis=1).to_json())
     col = 'Daily'
     title = 'New COVID19 cases in MD (%s)' %today
-    color_mapper = LinearColorMapper(palette=Inferno256, 
+    color_mapper = LinearColorMapper(palette=Viridis256, 
                             low=map_df[col].min(), 
                             high=map_df[col].max())
 
@@ -41,39 +41,45 @@ def plot_map(map_df):
                                     ('Zip code','@Zip'),
                                     ('Population','@Population'),
                                     ('Cases', '@Cases'),
-                                    ('Cases/1M population', '@per_population'),
-                                    ('Daily increase','@increase'),
+                                    ('Cases/1M population', '@Total'),
+                                    ('Daily increase','@Daily'),
                                     ('Incases/1M population', '@per_population_increase')]))
 
-    callback = CustomJS(args=dict(map_plot=state_map, 
-                                source = geosource, 
-                                color_map = color_mapper,
-                                today = today,
-                                p = p), 
-                        code ="""
-        var low = Math.min.apply(Math,source.data[cb_obj.value]);
-        var high = Math.max.apply(Math,source.data[cb_obj.value]);
+    code = """
+        var selected = cb_obj.value
+        console.log('Selected: ' + selected);
+        var low = Math.min.apply(Math,source.data[selected]);
+        var high = Math.max.apply(Math,source.data[selected]);
+        console.log('Low: ' + low+ '; high: ' + high);
         color_mapper.low = low;
         color_mapper.high = high;
-        map_plot.glyph.fill_color.value = cb_obj.value;
-        map_plot.trigger('change');
-        if (cb_obj.value == 'Total'){
+        map_plot.glyph.fill_color = {'field': selected,
+                                    'transform': color_mapper};
+        if (selected == 'Total'){
             var title = 'COVID19 cases in MD (per 1M population)';
         }else{
-            var title = 'New COVID19 cases in MD (' + today + ')' 
+            var title = 'New COVID19 cases in MD (' + today + ')'; 
         }
-        p.title = title;
-        map_plot.change.emit();
-        source.change.emit();
-        color_map.change.emit()
-    """)
+        console.log('Plotting: ' + title)
+        p.title.text = title;
+    """
 
-    select = Select(title = 'Dataset', options = ['Daily','Total'], value = 'Daily')
+        
+    callback = CustomJS(args=dict(map_plot=state_map, 
+                                source = geosource, 
+                                today = today,
+                                color_mapper = color_mapper,
+                                p = p), code = code)
+        
+
+    select = Select(title = 'Dataset', 
+                    value = 'Daily',
+                    options = ['Total','Daily'])
     select.js_on_change('value', callback)
     #color bar
     color_bar = ColorBar(color_mapper = color_mapper, 
                         label_standoff = 8,
-                        width = 500, height = 20,
+                        width = 400, height = 20,
                         border_line_color = None,
                         location = (0,0), 
                         orientation='horizontal')
@@ -102,7 +108,7 @@ def plot_zip_time_series(ts_data):
     lines = []
     for zip_code, zip_df in ts_data.groupby('Zip'):
         source = ColumnDataSource(zip_df)
-        color = 'red' if zip_code == '20850' else 'black'
+        color = 'red' if zip_code == '20850' else 'lightgray'
         alpha = 0.9 if zip_code == '20850' else 0.1
         lw = 10 if zip_code == '20850' else 1
         line = p.line(x='Date',
@@ -121,24 +127,35 @@ def plot_zip_time_series(ts_data):
                         ('Zip code', '@Zip')])
         lines.append(line)
         
-    def update_plot(attr, old, new):
-        highlight_zip = select.value
 
-        for line in lines:
-            if line.name != highlight_zip:
-                line.glyph.line_alpha = 0.1
-                line.glyph.line_color = 'lightgray'
-                line.glyph.line_width = 1
-            else:
-                line.glyph.line_alpha = 0.9
-                line.glyph.line_color = 'red'
-                line.glyph.line_width = 10
+    code = """
+        var highlight_zip_code = cb_obj.value.toString()
+        console.log('Selected Zip: ' + highlight_zip_code);
+        var i;
+        for (i = 0; i < lines.length; i++){
+            var line = lines[i];
+            if (line.name == highlight_zip_code){
+                console.log('Found: ' + line.name);
+                line.glyph.line_alpha = 0.9;
+                line.glyph.line_color = 'red';
+                line.glyph.line_width = 10;
+            }else{
+                line.glyph.line_alpha = 0.1;
+                line.glyph.line_color = 'lightgray';
+                line.glyph.line_width = 1;
+            }
+            line.change.emit();
+        } 
+        console.log('The last zip code is: ' + line.name + '(finding: ' + highlight_zip_code + ')');
+    """
+
         
+    callback = CustomJS(args=dict(lines=lines), code = code)
 
     select = Select(title='Zip code', 
         options=ts_data.Zip.unique().tolist(), 
         value='20850')
-    select.on_change('value', update_plot)
+    select.js_on_change('value', callback)
     p.add_tools(hover)
     p.legend.visible = False
     return column(select, p)
