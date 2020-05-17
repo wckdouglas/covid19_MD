@@ -1,0 +1,9 @@
+setup:
+  config: {}
+build:
+  languages:
+    - python
+  packages:
+    - build-essential
+run:
+  web: 'bokeh serve --show app.py'
