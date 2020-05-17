@@ -20,7 +20,7 @@ def plot_map(map_df):
                             high=map_df[col].max())
 
     p = figure(title = title, 
-            plot_height = 600,
+            plot_height = 400,
             plot_width = 800, 
             toolbar_location = 'below',
             tools = "box_zoom, reset")
@@ -109,7 +109,7 @@ def plot_zip_time_series(ts_data):
     for zip_code, zip_df in ts_data.groupby('Zip'):
         source = ColumnDataSource(zip_df)
         color = 'red' if zip_code == '20850' else 'lightgray'
-        alpha = 0.9 if zip_code == '20850' else 0.1
+        alpha = 0.9 if zip_code == '20850' else 0.5
         lw = 10 if zip_code == '20850' else 1
         line = p.line(x='Date',
                 y='Cases',
