@@ -6,4 +6,4 @@ build:
   packages:
     - build-essential
 run:
-  web: 'bokeh serve --show app.py'
+  web: 'web: bokeh serve  app.py'
