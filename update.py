@@ -12,9 +12,53 @@ from bokeh.palettes import brewer
 from bokeh.palettes import Inferno256, Viridis256
 from bokeh.plotting import figure
 from src.utils import Data, markdown_html
-from src.plotting import plot_line
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('Update')
+
+def plot_line(ts_data):
+    p = figure(x_axis_type="datetime", 
+                plot_width = 950, 
+                x_axis_label='Date',
+                y_axis_label = 'Total Cases',
+                title = 'Daily cases by city',
+                tools='save,pan,box_zoom,reset,wheel_zoom')
+    p.xgrid.grid_line_color = None
+    p.ygrid.grid_line_color = None
+    p.title.text_font_size = '25pt'
+    p.xaxis.axis_label = 'Date'
+    p.yaxis.axis_label = 'Total Cases'
+    p.xaxis.axis_label_text_font_size = "25pt"
+    p.xaxis.major_label_text_font_size = "25pt"
+    p.yaxis.axis_label_text_font_size = "25pt"
+    p.yaxis.major_label_text_font_size = "25pt"
+
+
+    for city, city_df in ts_data.groupby('City'):
+        source = ColumnDataSource(city_df)
+        if city == 'Rockville':
+            color = 'red'
+            lw = 4
+            alpha = 1
+        else:
+            color = 'gray'
+            lw = 2
+            alpha = 0.6
+        
+        p.line(x='Date',
+                y='Cases',
+                color = color,
+                line_width=lw,
+                line_alpha=alpha,
+                source=source)
+        #add tool tips
+        hover = HoverTool(tooltips =[
+                        ('Date','@formatted_date'),
+                        ('Cases','@Cases'),
+                        ('City', '@City')])
+    p.add_tools(hover)
+    logger.info('Plotted line plot')
+    return p
+
 
 def plot_cases_map(data):
     geosource = GeoJSONDataSource(geojson = data.drop('Date', axis=1).to_json())

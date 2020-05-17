@@ -12,7 +12,9 @@ ts_data = pd.read_csv('data/ts.csv') \
     .assign(Zip = lambda d: d.Zip.astype(str))
 ts_plot = plot_zip_time_series(ts_data)
 
-map_df = gpd.read_file('data/MD.geojson')
+map_df = gpd.read_file('data/MD.geojson') \
+    .rename(columns = {'per_population':'Total',
+                        'increase':'Daily'})
 map_plot = plot_map(map_df)
 
 curdoc().add_root(column(ts_plot,map_plot))

@@ -1,4 +1,4 @@
-from bokeh.models import (ColorBar, ColumnDataSource,
+from bokeh.models import (ColorBar, ColumnDataSource, CustomJS,
                           GeoJSONDataSource, HoverTool, Select,
                           LinearColorMapper, Slider, BasicTicker)
 from bokeh.layouts import column, row, widgetbox
@@ -13,7 +13,7 @@ def plot_map(map_df):
     today = str(map_df.Date.astype(str).unique()[0]).split('T')[0]
     logger.info('Plotting %s' %today)
     geosource = GeoJSONDataSource(geojson = map_df.drop('Date', axis=1).to_json())
-    col = 'increase'
+    col = 'Daily'
     title = 'New COVID19 cases in MD (%s)' %today
     color_mapper = LinearColorMapper(palette=Inferno256, 
                             low=map_df[col].min(), 
@@ -45,17 +45,31 @@ def plot_map(map_df):
                                     ('Daily increase','@increase'),
                                     ('Incases/1M population', '@per_population_increase')]))
 
-    def update(attr, old, new):
-        data = 'per_population' if new == 'Total' else 'increase'
-        title = 'COVID19 cases in MD (per 1M population)' if new == 'Total' else 'New COVID19 cases in MD (%s)' %today
-        color_mapper.low = map_df[data].min()
-        color_mapper.high=map_df[data].max()
-        state_map.glyph.fill_color = {'field': data,
-                                      'transform': color_mapper}
-        
+    callback = CustomJS(args=dict(map_plot=state_map, 
+                                source = geosource, 
+                                color_map = color_mapper,
+                                today = today,
+                                p = p), 
+                        code ="""
+        var low = Math.min.apply(Math,source.data[cb_obj.value]);
+        var high = Math.max.apply(Math,source.data[cb_obj.value]);
+        color_mapper.low = low;
+        color_mapper.high = high;
+        map_plot.glyph.fill_color.value = cb_obj.value;
+        map_plot.trigger('change');
+        if (cb_obj.value == 'Total'){
+            var title = 'COVID19 cases in MD (per 1M population)';
+        }else{
+            var title = 'New COVID19 cases in MD (' + today + ')' 
+        }
+        p.title = title;
+        map_plot.change.emit();
+        source.change.emit();
+        color_map.change.emit()
+    """)
 
     select = Select(title = 'Dataset', options = ['Daily','Total'], value = 'Daily')
-    select.on_change('value',update)
+    select.js_on_change('value', callback)
     #color bar
     color_bar = ColorBar(color_mapper = color_mapper, 
                         label_standoff = 8,
