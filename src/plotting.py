@@ -11,7 +11,8 @@ logger = logging.getLogger('Interactive plots')
 
 def plot_map(map_df):
     today = str(map_df.Date.astype(str).unique()[0]).split('T')[0]
-    logger.info('Plotting %s' %today)
+    logger.info('Plotting map for: %s' %today)
+    logger.info('Plotting %i zip codes' %map_df.shape[0])
     geosource = GeoJSONDataSource(geojson = map_df.drop('Date', axis=1).to_json())
     col = 'Daily'
     title = 'New COVID19 cases in MD (%s)' %today
@@ -100,6 +101,7 @@ def plot_time_series(ts_data, grouping='Zip'):
     else:
         title = 'City'
         default = 'Rockville'
+    logger.info('Plotting time series for: %s level' %title)
     options = ts_data[grouping].unique().tolist()
     p = figure(x_axis_type="datetime", 
                 x_axis_label='Date',
@@ -147,6 +149,7 @@ def plot_time_series(ts_data, grouping='Zip'):
         hover = HoverTool(tooltips = tooltips)
         lines.append(line)
     p.add_tools(hover)
+    p.legend.visible = False
 
     code = """
         var highlight = cb_obj.value.toString()
@@ -176,5 +179,5 @@ def plot_time_series(ts_data, grouping='Zip'):
         options=options, 
         value=default)
     select.js_on_change('value', callback)
-    p.legend.visible = False
+    logger.info('Plotting %i %s' %(len(options), title))
     return column(select, p)
