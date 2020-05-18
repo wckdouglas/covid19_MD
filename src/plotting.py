@@ -37,13 +37,14 @@ def plot_map(map_df):
                     line_width = 0.25, 
                     fill_alpha = 1)
     # Create hover tool
-    p.add_tools(HoverTool(tooltips = [('City','@City'),
+    hover = HoverTool(tooltips = [('City','@City'),
                                     ('Zip code','@Zip'),
                                     ('Population','@Population'),
                                     ('Cases', '@Cases'),
                                     ('Cases/1M population', '@Total'),
-                                    ('Daily increase','@Daily'),
-                                    ('Incases/1M population', '@per_population_increase')]))
+                                    ('Daily increase','@Daily')])
+                                    #('Incases/1M population', '@per_population_increase')]))
+    p.add_tools(hover)
 
     code = """
         var selected = cb_obj.value
@@ -145,7 +146,7 @@ def plot_time_series(ts_data, grouping='Zip'):
         #add tool tips
         hover = HoverTool(tooltips = tooltips)
         lines.append(line)
-        
+    p.add_tools(hover)
 
     code = """
         var highlight = cb_obj.value.toString()
@@ -175,6 +176,5 @@ def plot_time_series(ts_data, grouping='Zip'):
         options=options, 
         value=default)
     select.js_on_change('value', callback)
-    p.add_tools(hover)
     p.legend.visible = False
     return column(select, p)
