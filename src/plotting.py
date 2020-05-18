@@ -80,6 +80,8 @@ def plot_map(map_df):
     color_bar = ColorBar(color_mapper = color_mapper, 
                         label_standoff = 8,
                         width = 400, height = 20,
+                        major_label_text_font_size='16px',
+                        major_tick_line_width=3,
                         border_line_color = None,
                         location = (0,0), 
                         orientation='horizontal')
@@ -140,7 +142,7 @@ def plot_zip_time_series(ts_data):
                 line.glyph.line_color = 'red';
                 line.glyph.line_width = 10;
             }else{
-                line.glyph.line_alpha = 0.1;
+                line.glyph.line_alpha = 0.3;
                 line.glyph.line_color = 'lightgray';
                 line.glyph.line_width = 1;
             }

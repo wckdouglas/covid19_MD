@@ -103,7 +103,7 @@ def markdown_html(html_file, out_file):
     logger.info('Written %i lines from %i lines to %s' %(outline, inline, out_file))
 
 
-def get_data():
+def get_data(ts_data_file = '../data/ts.csv', map_data_file = '../data/MD.geojson'):
     maryland = Data(state='MD')
     data = maryland.geo\
         .merge(maryland.zip_map, on ='Zip', how = 'right')\
@@ -138,16 +138,14 @@ def get_data():
         .fillna(0))) \
         .reset_index(drop=True) \
         .assign(formatted_date = lambda d: d.Date.astype(str)) 
-    ts_data_file = 'data/ts.csv'
     ts_data.to_csv(ts_data_file, index=False)
     logger.info('Written %s' %ts_data_file)
 
     map_df = total_case_data\
         .merge(per_day_increase_data.filter(['Zip','increase']))\
         .assign(per_population_increase = lambda d: 1e6*d['increase'].astype(int)/d.Population.astype(int))
-    geo_data = "data/MD.geojson"
-    map_df.to_file(geo_data, driver='GeoJSON')
-    logger.info('Written %s' %geo_data)
+    map_df.to_file(map_data_file, driver='GeoJSON')
+    logger.info('Written %s' %map_data_file)
 
 
 if __name__ == '__main__':
