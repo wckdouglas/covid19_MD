@@ -47,8 +47,8 @@ map_plot = plot_map(map_df)
 
 
 # combined figure
-Zip_panel = Panel(child=column(zip_ts_plot, map_plot), title='Zip')
-City_panel = Panel(child=column(city_ts_plot, map_plot), title='City')
+Zip_panel = Panel(child=column(zip_ts_plot, map_plot), title='By zip code')
+City_panel = Panel(child=column(city_ts_plot, map_plot), title='By City')
 dashboard = Tabs(tabs=[Zip_panel, City_panel])
 
 #p = column(ts_plot, city_ts_plot, map_plot)
