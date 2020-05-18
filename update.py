@@ -8,6 +8,9 @@ from bokeh.layouts import column
 from bokeh.io import output_file, save
 from src.plotting import plot_map, plot_zip_time_series
 from src.utils import Data, markdown_html, get_data
+import logging
+logging.basicConfig(level = logging.INFO)
+logger = logging.getLogger('Update plot')
 today = datetime.date.today()
 def is_updated(filename):
     creation_date = os.path.getmtime(filename)
@@ -18,6 +21,7 @@ def is_updated(filename):
 ts_data = 'data/ts.csv'
 map_data = 'data/MD.geojson'
 if not (is_updated(ts_data) or is_updated(map_data)):
+    logger.info('Updating data: %s' %str(today))
     #daily update!!
     get_data(ts_data_file = ts_data,
             map_data_file = map_data) 
