@@ -88,11 +88,22 @@ def plot_map(map_df):
     p.add_layout(color_bar)
     return column(select,p)
 
-def plot_zip_time_series(ts_data):
+def plot_time_series(ts_data, grouping='Zip'):
+    tooltips = [('Date','@formatted_date'),
+                ('Cases','@Cases'),
+                ('City', '@City')]
+    if grouping == 'Zip':
+        title = 'Zip code' 
+        default = '20850'
+        tooltips.append(('Zip code', '@Zip'))
+    else:
+        title = 'City'
+        default = 'Rockville'
+    options = ts_data[grouping].unique().tolist()
     p = figure(x_axis_type="datetime", 
                 x_axis_label='Date',
                 y_axis_label = 'Total Cases',
-                title = 'Daily cases by Zip code',
+                title = 'Daily cases by {}'.format(title),
                 tools='box_zoom,reset',
                 plot_width=800, plot_height=400,
                 y_range=(0, ts_data.Cases.max()),
@@ -108,55 +119,61 @@ def plot_zip_time_series(ts_data):
     p.yaxis.major_label_text_font_size = "25pt"
 
     lines = []
-    for zip_code, zip_df in ts_data.groupby('Zip'):
-        source = ColumnDataSource(zip_df)
-        color = 'red' if zip_code == '20850' else 'lightgray'
-        alpha = 0.9 if zip_code == '20850' else 0.5
-        lw = 10 if zip_code == '20850' else 1
+    for group, group_df in ts_data.groupby(grouping):
+        source = ColumnDataSource(group_df)
+
+        if group in ['Rockville','20850']:
+            color = 'red'
+            alpha = 0.7
+            lw = 5
+            level = 'overlay'
+        else:
+            color = 'lightgray'
+            alpha = 0.3
+            lw = 2
+            level = 'underlay'
+
         line = p.line(x='Date',
                 y='Cases',
                 color = color,
                 line_alpha=alpha,
                 line_width = lw,
-                legend_label=str(zip_code),
-                name = str(zip_code),
+                legend_label=str(group),
+                name = str(group),
                 source=source)
+        line.level = level
         #add tool tips
-        hover = HoverTool(tooltips =[
-                        ('Date','@formatted_date'),
-                        ('Cases','@Cases'),
-                        ('City', '@City'),
-                        ('Zip code', '@Zip')])
+        hover = HoverTool(tooltips = tooltips)
         lines.append(line)
         
 
     code = """
-        var highlight_zip_code = cb_obj.value.toString()
-        console.log('Selected Zip: ' + highlight_zip_code);
+        var highlight = cb_obj.value.toString()
+        console.log('Selected: ' + highlight);
         var i;
         for (i = 0; i < lines.length; i++){
             var line = lines[i];
-            if (line.name == highlight_zip_code){
+            if (line.name == highlight){
                 console.log('Found: ' + line.name);
-                line.glyph.line_alpha = 0.9;
+                line.glyph.line_alpha = 0.7;
                 line.glyph.line_color = 'red';
-                line.glyph.line_width = 10;
+                line.glyph.line_width = 5;
+                line.level = 'overlay';
             }else{
                 line.glyph.line_alpha = 0.3;
                 line.glyph.line_color = 'lightgray';
                 line.glyph.line_width = 1;
+                line.level = 'underlay';
             }
             line.change.emit();
         } 
-        console.log('The last zip code is: ' + line.name + '(finding: ' + highlight_zip_code + ')');
     """
 
         
     callback = CustomJS(args=dict(lines=lines), code = code)
-
-    select = Select(title='Zip code', 
-        options=ts_data.Zip.unique().tolist(), 
-        value='20850')
+    select = Select(title=title, 
+        options=options, 
+        value=default)
     select.js_on_change('value', callback)
     p.add_tools(hover)
     p.legend.visible = False

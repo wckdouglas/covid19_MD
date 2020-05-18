@@ -6,7 +6,8 @@ import pandas as pd
 import geopandas as gpd
 from bokeh.layouts import column
 from bokeh.io import output_file, save
-from src.plotting import plot_map, plot_zip_time_series
+from bokeh.models.widgets import Tabs, Panel
+from src.plotting import plot_map, plot_time_series
 from src.utils import Data, markdown_html, get_data
 import logging
 logging.basicConfig(level = logging.INFO)
@@ -30,7 +31,12 @@ if not (is_updated(ts_data) or is_updated(map_data)):
 ts_data = pd.read_csv('data/ts.csv') \
     .assign(Date = lambda d: pd.to_datetime(d.Date)) \
     .assign(Zip = lambda d: d.Zip.astype(str))
-ts_plot = plot_zip_time_series(ts_data)
+zip_ts_plot = plot_time_series(ts_data, grouping='Zip')
+city_df = ts_data\
+    .groupby(['City','Date','formatted_date'], as_index=False)\
+    .agg({'Cases':'sum'})
+city_ts_plot = plot_time_series(city_df, grouping='City')
+
 
 
 # read map data and plot
@@ -41,9 +47,13 @@ map_plot = plot_map(map_df)
 
 
 # combined figure
-p = column(ts_plot, map_plot)
+Zip_panel = Panel(child=column(zip_ts_plot, map_plot), title='Zip')
+City_panel = Panel(child=column(city_ts_plot, map_plot), title='City')
+dashboard = Tabs(tabs=[Zip_panel, City_panel])
+
+#p = column(ts_plot, city_ts_plot, map_plot)
 html_file = 'output.html'
 COVID_HTML = '../wckdouglas.github.io/_includes/COVID.html'
 output_file(html_file)
-save(p)
+save(dashboard)
 markdown_html(html_file,COVID_HTML)
