@@ -92,7 +92,7 @@ def plot_map(map_df):
 
 
 class TSplot():
-    def __init__(self, ts_data, y, ylabel, tooltips, title=''):
+    def __init__(self, ts_data, y='', ylabel='', tooltips=[], title=''):
         self.ts_data = ts_data
         self.y = y
         self.ylabel = ylabel
@@ -117,6 +117,8 @@ class TSplot():
         logger.info('Initialized ts plot')
     
     def plot(self, grouping):
+        if grouping == 'Zip':
+            self.tooltips.append(('Zip code', '@Zip'))
         self.lines = []
         for group, group_df in self.ts_data.groupby(grouping):
             source = ColumnDataSource(group_df)
@@ -147,42 +149,49 @@ class TSplot():
         self.p.add_tools(hover)
         self.p.legend.visible = False
 
-def plot_time_series(ts_data, grouping='Zip', y = 'Cases'):
-    if y == 'Cases':
-        ylabel = 'Total Cases'
-        title_main = 'Daily cases'
-        tooltips = [('Date','@formatted_date'),
-                    ('Cases','@Cases'),
-                    ('City', '@City')]
-    elif y == 'increase':
-        ylabel = 'New Cases'
-        title_main = 'New cases'
-        tooltips = [('Date','@formatted_date'),
-                    ('New cases','@increase'),
-                    ('City', '@City')]
-
+def plot_time_series(ts_cases_data, ts_new_case_data, grouping='Zip'):
+    # ts_cases_data should have at least three columns: Zip, Cases, Date
+    # ts_new_case_data: Zip, increase, Date
     if grouping == 'Zip':
         title = 'Zip code' 
         default = '20850'
-        tooltips.append(('Zip code', '@Zip'))
     else:
         title = 'City'
         default = 'Rockville'
 
-    logger.info('Plotting time series for: %s level - %s' %(title,y))
-    options = ts_data[grouping].unique().tolist()
+    logger.info('Plotting time series for: %s level ' %(title))
+    options = ts_cases_data[grouping].unique().tolist()
 
-    tsp = TSplot(ts_data, y, 
-            ylabel,  tooltips,
-            title='{} by {}'.format(title_main, title))
-    tsp.plot(grouping)
+    tsp_cases = TSplot(ts_cases_data, 
+            y = 'Cases', 
+            ylabel = 'Total cases',  
+            tooltips = [('Date','@formatted_date'),
+                        ('Cases','@Cases'),
+                        ('City', '@City')],
+            title='Daily Cases by %s' %title)
+    tsp_cases.plot(grouping)
+
+    tsp_new_cases = TSplot(ts_new_case_data, 
+            y = 'increase', 
+            ylabel = 'New cases',  
+            tooltips = [('Date','@formatted_date'),
+                    ('New cases','@increase'),
+                    ('City', '@City')],
+            title='Daily New Cases by %s' %title)
+    tsp_new_cases.plot(grouping)
 
     code = """
         var highlight = cb_obj.value.toString()
         console.log('Selected: ' + highlight);
         var i;
-        for (i = 0; i < lines.length; i++){
-            var line = lines[i];
+        for (i = 0; i < cases_lines.length; i++){
+            var cases_line = cases_lines[i];
+            var new_cases_line = new_cases_lines[i];
+            PaintLine(cases_line);
+            PaintLine(new_cases_line);
+        } 
+        
+        function PaintLine(line){
             if (line.name == highlight){
                 console.log('Found: ' + line.name);
                 line.glyph.line_alpha = 0.7;
@@ -196,14 +205,16 @@ def plot_time_series(ts_data, grouping='Zip', y = 'Cases'):
                 line.level = 'underlay';
             }
             line.change.emit();
-        } 
+        }
     """
 
         
-    callback = CustomJS(args=dict(lines=tsp.lines), code = code)
+    callback = CustomJS(args=dict(cases_lines=tsp_cases.lines,
+                                  new_cases_lines = tsp_new_cases.lines), 
+                        code = code)
     select = Select(title=title, 
         options=options, 
         value=default)
     select.js_on_change('value', callback)
     logger.info('Plotting %i %s' %(len(options), title))
-    return column(select, tsp.p)
+    return column(select, tsp_cases.p, tsp_new_cases.p)
