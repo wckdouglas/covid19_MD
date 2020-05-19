@@ -90,10 +90,20 @@ def plot_map(map_df):
     p.add_layout(color_bar)
     return column(select,p)
 
-def plot_time_series(ts_data, grouping='Zip'):
-    tooltips = [('Date','@formatted_date'),
-                ('Cases','@Cases'),
-                ('City', '@City')]
+def plot_time_series(ts_data, grouping='Zip', y = 'Cases'):
+    if y == 'Cases':
+        ylabel = 'Total Cases'
+        title_main = 'Daily cases'
+        tooltips = [('Date','@formatted_date'),
+                    ('Cases','@Cases'),
+                    ('City', '@City')]
+    elif y == 'increase':
+        ylabel = 'New Cases'
+        title_main = 'New cases'
+        tooltips = [('Date','@formatted_date'),
+                    ('New cases','@increase'),
+                    ('City', '@City')]
+
     if grouping == 'Zip':
         title = 'Zip code' 
         default = '20850'
@@ -101,21 +111,22 @@ def plot_time_series(ts_data, grouping='Zip'):
     else:
         title = 'City'
         default = 'Rockville'
-    logger.info('Plotting time series for: %s level' %title)
+
+    logger.info('Plotting time series for: %s level - %s' %(title,y))
     options = ts_data[grouping].unique().tolist()
     p = figure(x_axis_type="datetime", 
                 x_axis_label='Date',
-                y_axis_label = 'Total Cases',
-                title = 'Daily cases by {}'.format(title),
+                y_axis_label = ylabel,
+                title = '{} by {}'.format(title_main, title),
                 tools='box_zoom,reset',
                 plot_width=800, plot_height=400,
-                y_range=(0, ts_data.Cases.max()),
+                y_range=(0, ts_data[y].max()),
                 x_range= (ts_data.Date.min(), ts_data.Date.max()))
     p.xgrid.grid_line_color = None
     p.ygrid.grid_line_color = None
     p.title.text_font_size = '25pt'
     p.xaxis.axis_label = 'Date'
-    p.yaxis.axis_label = 'Total Cases'
+    p.yaxis.axis_label = ylabel
     p.xaxis.axis_label_text_font_size = "25pt"
     p.xaxis.major_label_text_font_size = "25pt"
     p.yaxis.axis_label_text_font_size = "25pt"
@@ -137,7 +148,7 @@ def plot_time_series(ts_data, grouping='Zip'):
             level = 'underlay'
 
         line = p.line(x='Date',
-                y='Cases',
+                y=y,
                 color = color,
                 line_alpha=alpha,
                 line_width = lw,

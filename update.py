@@ -4,6 +4,7 @@ import os
 import datetime
 import pandas as pd
 import geopandas as gpd
+import numpy as np
 from bokeh.layouts import column
 from bokeh.io import output_file, save
 from bokeh.models.widgets import Tabs, Panel
@@ -31,12 +32,22 @@ if not (is_updated(ts_data) or is_updated(map_data)):
 ts_data = pd.read_csv('data/ts.csv') \
     .assign(Date = lambda d: pd.to_datetime(d.Date)) \
     .assign(Zip = lambda d: d.Zip.astype(str))
-zip_ts_plot = plot_time_series(ts_data, grouping='Zip')
+zip_ts_plot = plot_time_series(ts_data, grouping='Zip', y ='Cases')
 city_df = ts_data\
     .groupby(['City','Date','formatted_date'], as_index=False)\
     .agg({'Cases':'sum'})
-city_ts_plot = plot_time_series(city_df, grouping='City')
+city_ts_plot = plot_time_series(city_df, grouping='City', y = 'Cases')
 
+
+new_zip_df = ts_data\
+    .assign(increase = lambda d: d.groupby('Zip').Cases.transform(lambda x: x - np.roll(x,1)))\
+    .query('increase>=0')
+new_zip_ts_plot = plot_time_series(new_zip_df, grouping='Zip', y = 'increase')
+
+new_city_df = new_zip_df\
+    .groupby(['City','Date','formatted_date'], as_index=False)\
+    .agg({'Cases':'sum','increase':'sum'})
+new_city_ts_plot = plot_time_series(new_city_df, grouping = 'City', y = 'increase')
 
 
 # read map data and plot
@@ -47,8 +58,8 @@ map_plot = plot_map(map_df)
 
 
 # combined figure
-Zip_panel = Panel(child=column(zip_ts_plot, map_plot), title='By zip code')
-City_panel = Panel(child=column(city_ts_plot, map_plot), title='By City')
+Zip_panel = Panel(child=column(zip_ts_plot, new_zip_ts_plot, map_plot), title='By zip code')
+City_panel = Panel(child=column(city_ts_plot, new_city_ts_plot, map_plot), title='By City')
 dashboard = Tabs(tabs=[Zip_panel, City_panel])
 
 #p = column(ts_plot, city_ts_plot, map_plot)
