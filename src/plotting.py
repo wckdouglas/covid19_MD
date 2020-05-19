@@ -90,6 +90,63 @@ def plot_map(map_df):
     p.add_layout(color_bar)
     return column(select,p)
 
+
+class TSplot():
+    def __init__(self, ts_data, y, ylabel, tooltips, title=''):
+        self.ts_data = ts_data
+        self.y = y
+        self.ylabel = ylabel
+        self.tooltips = tooltips
+        self.p = figure(x_axis_type="datetime", 
+                    x_axis_label='Date',
+                    y_axis_label = self.ylabel,
+                    title = title,
+                    tools='box_zoom,reset',
+                    plot_width=800, plot_height=400,
+                    y_range=(0, self.ts_data[y].max()),
+                    x_range= (self.ts_data.Date.min(), self.ts_data.Date.max()))
+        self.p.xgrid.grid_line_color = None
+        self.p.ygrid.grid_line_color = None
+        self.p.title.text_font_size = '25pt'
+        self.p.xaxis.axis_label = 'Date'
+        self.p.yaxis.axis_label = ylabel
+        self.p.xaxis.axis_label_text_font_size = "25pt"
+        self.p.xaxis.major_label_text_font_size = "25pt"
+        self.p.yaxis.axis_label_text_font_size = "25pt"
+        self.p.yaxis.major_label_text_font_size = "25pt"
+        logger.info('Initialized ts plot')
+    
+    def plot(self, grouping):
+        self.lines = []
+        for group, group_df in self.ts_data.groupby(grouping):
+            source = ColumnDataSource(group_df)
+
+            if group in ['Rockville','20850']:
+                color = 'red'
+                alpha = 0.7
+                lw = 5
+                level = 'overlay'
+            else:
+                color = 'lightgray'
+                alpha = 0.3
+                lw = 2
+                level = 'underlay'
+
+            line = self.p.line(x='Date',
+                    y=self.y,
+                    color = color,
+                    line_alpha=alpha,
+                    line_width = lw,
+                    legend_label=str(group),
+                    name = str(group),
+                    source=source)
+            line.level = level
+            #add tool tips
+            hover = HoverTool(tooltips = self.tooltips)
+            self.lines.append(line)
+        self.p.add_tools(hover)
+        self.p.legend.visible = False
+
 def plot_time_series(ts_data, grouping='Zip', y = 'Cases'):
     if y == 'Cases':
         ylabel = 'Total Cases'
@@ -114,53 +171,11 @@ def plot_time_series(ts_data, grouping='Zip', y = 'Cases'):
 
     logger.info('Plotting time series for: %s level - %s' %(title,y))
     options = ts_data[grouping].unique().tolist()
-    p = figure(x_axis_type="datetime", 
-                x_axis_label='Date',
-                y_axis_label = ylabel,
-                title = '{} by {}'.format(title_main, title),
-                tools='box_zoom,reset',
-                plot_width=800, plot_height=400,
-                y_range=(0, ts_data[y].max()),
-                x_range= (ts_data.Date.min(), ts_data.Date.max()))
-    p.xgrid.grid_line_color = None
-    p.ygrid.grid_line_color = None
-    p.title.text_font_size = '25pt'
-    p.xaxis.axis_label = 'Date'
-    p.yaxis.axis_label = ylabel
-    p.xaxis.axis_label_text_font_size = "25pt"
-    p.xaxis.major_label_text_font_size = "25pt"
-    p.yaxis.axis_label_text_font_size = "25pt"
-    p.yaxis.major_label_text_font_size = "25pt"
 
-    lines = []
-    for group, group_df in ts_data.groupby(grouping):
-        source = ColumnDataSource(group_df)
-
-        if group in ['Rockville','20850']:
-            color = 'red'
-            alpha = 0.7
-            lw = 5
-            level = 'overlay'
-        else:
-            color = 'lightgray'
-            alpha = 0.3
-            lw = 2
-            level = 'underlay'
-
-        line = p.line(x='Date',
-                y=y,
-                color = color,
-                line_alpha=alpha,
-                line_width = lw,
-                legend_label=str(group),
-                name = str(group),
-                source=source)
-        line.level = level
-        #add tool tips
-        hover = HoverTool(tooltips = tooltips)
-        lines.append(line)
-    p.add_tools(hover)
-    p.legend.visible = False
+    tsp = TSplot(ts_data, y, 
+            ylabel,  tooltips,
+            title='{} by {}'.format(title_main, title))
+    tsp.plot(grouping)
 
     code = """
         var highlight = cb_obj.value.toString()
@@ -185,10 +200,10 @@ def plot_time_series(ts_data, grouping='Zip', y = 'Cases'):
     """
 
         
-    callback = CustomJS(args=dict(lines=lines), code = code)
+    callback = CustomJS(args=dict(lines=tsp.lines), code = code)
     select = Select(title=title, 
         options=options, 
         value=default)
     select.js_on_change('value', callback)
     logger.info('Plotting %i %s' %(len(options), title))
-    return column(select, p)
+    return column(select, tsp.p)
