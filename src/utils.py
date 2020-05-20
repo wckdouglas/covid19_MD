@@ -32,7 +32,7 @@ class Data():
             downloaded = requests.get(self.geo_shape_url)
             out.write(downloaded.content)
         logger.info('Downloaded %s' %zipfile)
-        os.system('unzip %s' %zipfile)
+        os.system('unzip  %s -d data' %zipfile)
         logger.info('unzipped %s' %zipfile)
 
         
