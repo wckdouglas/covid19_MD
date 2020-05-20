@@ -9,11 +9,20 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('Interactive plots')
 
-def plot_map(map_df):
-    today = str(map_df.Date.astype(str).unique()[0]).split('T')[0]
+def plot_map(map_df, with_zip=True, today=None):
+    tooltips = [('City','@City'),
+                ('Population','@Population'),
+                ('Cases', '@Cases'),
+                ('Cases/1M population', '@Total'),
+                ('Daily increase','@Daily')]
     logger.info('Plotting map for: %s' %today)
-    logger.info('Plotting %i zip codes' %map_df.shape[0])
-    geosource = GeoJSONDataSource(geojson = map_df.drop('Date', axis=1).to_json())
+    if with_zip:
+        logger.info('Plotting %i zip codes' %map_df.shape[0])
+        tooltips.append(('Zip code','@Zip'))
+        geosource = GeoJSONDataSource(geojson = map_df.drop('Date', axis=1).to_json())
+    else: 
+        logger.info('Plotting %i cities' %map_df.shape[0])
+        geosource = GeoJSONDataSource(geojson = map_df.to_json())
     col = 'Daily'
     title = 'New COVID19 cases in MD (%s)' %today
     color_mapper = LinearColorMapper(palette=Viridis256, 
@@ -38,13 +47,7 @@ def plot_map(map_df):
                     line_width = 0.25, 
                     fill_alpha = 1)
     # Create hover tool
-    hover = HoverTool(tooltips = [('City','@City'),
-                                    ('Zip code','@Zip'),
-                                    ('Population','@Population'),
-                                    ('Cases', '@Cases'),
-                                    ('Cases/1M population', '@Total'),
-                                    ('Daily increase','@Daily')])
-                                    #('Incases/1M population', '@per_population_increase')]))
+    hover = HoverTool(tooltips = tooltips)
     p.add_tools(hover)
 
     code = """
@@ -144,8 +147,8 @@ class TSplot():
                     source=source)
             line.level = level
             #add tool tips
-            hover = HoverTool(tooltips = self.tooltips)
             self.lines.append(line)
+        hover = HoverTool(tooltips = self.tooltips)
         self.p.add_tools(hover)
         self.p.legend.visible = False
 

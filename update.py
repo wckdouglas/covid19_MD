@@ -55,12 +55,24 @@ city_ts_plot = plot_time_series(city_df, new_city_df, grouping='City')
 map_df = gpd.read_file('data/MD.geojson') \
     .rename(columns = {'per_population':'Total',
                         'increase':'Daily'})
-map_plot = plot_map(map_df)
+today = str(map_df.Date.astype(str).unique()[0]).split('T')[0]
+zip_map_plot = plot_map(map_df, with_zip = True, today = today)
+
+map_df = gpd.read_file('data/MD.geojson') \
+    .rename(columns = {'per_population':'Total',
+                        'increase':'Daily'}) \
+    .drop('Zip', axis=1)\
+    .assign(Population = lambda d: d.Population.astype(float))\
+    .dissolve(by = ['City', 'State'], aggfunc='sum')\
+    .assign(Total = lambda d: d.Cases/d.Population)\
+    .assign(per_populatin_increase = lambda d: d.Daily/d.Population) \
+    .reset_index()
+city_map_plot = plot_map(map_df, with_zip = False)
 
 
 # combined figure
-Zip_panel = Panel(child=column(zip_ts_plot, map_plot), title='By zip code')
-City_panel = Panel(child=column(city_ts_plot, map_plot), title='By City')
+Zip_panel = Panel(child=column(zip_ts_plot, zip_map_plot,sizing_mode="stretch_both"), title='By zip code')
+City_panel = Panel(child=column(city_ts_plot, city_map_plot,sizing_mode="stretch_both"), title='By City')
 dashboard = Tabs(tabs=[Zip_panel, City_panel])
 
 #p = column(ts_plot, city_ts_plot, map_plot)
