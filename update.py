@@ -67,7 +67,7 @@ map_df = gpd.read_file('data/MD.geojson') \
     .assign(Total = lambda d: d.Cases/d.Population)\
     .assign(per_populatin_increase = lambda d: d.Daily/d.Population) \
     .reset_index()
-city_map_plot = plot_map(map_df, with_zip = False)
+city_map_plot = plot_map(map_df, with_zip = False, today = today)
 
 
 # combined figure
