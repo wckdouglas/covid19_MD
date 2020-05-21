@@ -37,7 +37,7 @@ jobs:
           paths:
             - /home/circleci/miniconda
 
-      -run:
+      - run:
           name: run-test
           working_directory: ~/COVID19_MD
           command: |
