@@ -8,3 +8,4 @@ The different data sources used in this project are:
 2. Zip code geographic shape data from Census ([Data source](https://www2.census.gov/geo/tiger/TIGER2019/ZCTA5/tl_2019_us_zcta510.zip))
 3. Population data ([Data source](https://www.maryland-demographics.com/zip_codes_by_population))
 4. Zip code and City information ([Data source](https://public.opendatasoft.com/explore/dataset/us-zip-code-latitude-and-longitude/table/))
+5. Cases by Zip code ([Data source](https://coronavirus.maryland.gov/datasets/md-covid-19-cases-by-zip-code/geoservice))
