@@ -4,7 +4,7 @@ orbs:
   python: circleci/python@0.2.1
 
 jobs:
-  build-and-test:
+  build-conda:
     executor: python/default
     steps:
       - checkout
@@ -37,14 +37,18 @@ jobs:
           paths:
             - /home/circleci/miniconda
 
+  test:
+    executor: python/default
+    steps:
       - run:
           name: run_test
           working_directory: ~/COVID19_MD
           command: |
             source ~/miniconda/bin/activate root
             python update.py
+
 workflows:
-  jobs:
-      - install_miniconda
-      - install_requirements
-      - run_test
+  build-and-test:
+    jobs:
+      - build-conda
+      - test
