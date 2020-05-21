@@ -13,7 +13,7 @@ jobs:
           key: v1-miniconda-{{ .Branch }}
 
       - run:
-          name: install-miniconda
+          name: install_miniconda
           command: |
             if [[ ! -d /home/circleci/miniconda ]]; then
                 wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh &&
@@ -26,7 +26,7 @@ jobs:
             conda update -q conda
 
       - run:
-          name: install requirements
+          name: install_requirements
           command: >
             conda install --yes --quiet -n root  python=3.6
                  pandas geopandas beautifulsoup4 html5lib 
@@ -38,7 +38,7 @@ jobs:
             - /home/circleci/miniconda
 
       - run:
-          name: run-test
+          name: run_test
           working_directory: ~/COVID19_MD
           command: |
             source ~/miniconda/bin/activate root
@@ -46,4 +46,6 @@ jobs:
 workflows:
   main:
     jobs:
-      - install-miniconda
+      - install_miniconda
+      - install_requirements
+      - run_test
