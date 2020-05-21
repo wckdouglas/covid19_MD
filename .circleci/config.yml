@@ -37,8 +37,6 @@ jobs:
           working_directory: /home/circleci/project
           command: |
             source ~/miniconda/bin/activate root
-            ls
-            pwd
             python update.py
 
 workflows:
