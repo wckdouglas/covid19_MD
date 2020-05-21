@@ -10,6 +10,16 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('Interactive plots')
 
 def plot_map(map_df, with_zip=True, today=None):
+    '''
+    plotting maryland map
+
+    input data frame should have at least the following columns:
+    1. City
+    2. Population
+    3. Cases
+    4. Total: This is Cases/1M population
+    5. Daily: This is the new case number 
+    '''
     tooltips = [('City','@City'),
                 ('Population','@Population'),
                 ('Cases', '@Cases'),

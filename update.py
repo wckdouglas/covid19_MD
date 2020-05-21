@@ -76,7 +76,7 @@ City_panel = Panel(child=column(city_ts_plot, city_map_plot,sizing_mode="stretch
 dashboard = Tabs(tabs=[Zip_panel, City_panel])
 
 #p = column(ts_plot, city_ts_plot, map_plot)
-html_file = 'output.html'
+html_file = 'dashboard.html'
 COVID_HTML = '../wckdouglas.github.io/_includes/COVID.html'
 output_file(html_file)
 save(dashboard)
