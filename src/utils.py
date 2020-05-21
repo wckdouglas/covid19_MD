@@ -27,7 +27,7 @@ class Data():
         self.geo = self.read_map()
         self.zip_map = self.read_zip_map()
         self.zip_codes = self.zip_map.Zip
-        self.zip_covid = self.read_zip_COVID()
+        self.zip_covid = self.read_zip_COVID_old()
         self.zip_population = self.read_population()
         
     def download_zipfile(self, zipfile):
