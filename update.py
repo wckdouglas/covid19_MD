@@ -84,5 +84,5 @@ html_file = 'dashboard.html'
 COVID_HTML = '../wckdouglas.github.io/_includes/COVID.html'
 output_file(html_file)
 save(dashboard)
-if os.path.isfile(COVID):
+if os.path.isfile(COVID_HTML):
     markdown_html(html_file,COVID_HTML)
