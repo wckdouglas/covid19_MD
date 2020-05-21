@@ -44,8 +44,7 @@ jobs:
             source ~/miniconda/bin/activate root
             python update.py
 workflows:
-  main:
-    jobs:
+  jobs:
       - install_miniconda
       - install_requirements
       - run_test
