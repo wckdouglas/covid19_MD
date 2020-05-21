@@ -37,6 +37,8 @@ jobs:
           working_directory: ~/COVID19_MD
           command: |
             source ~/miniconda/bin/activate root
+            ls
+            pwd
             python update.py
 
 workflows:
