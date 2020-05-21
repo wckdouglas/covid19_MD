@@ -16,6 +16,10 @@ logging.basicConfig(level = logging.INFO)
 logger = logging.getLogger('Update plot')
 today = datetime.date.today()
 def is_updated(filename):
+    '''
+    check if the file exist
+    if yes, check if it's updated today
+    '''
     if os.path.isfile(filename):
         creation_date = os.path.getmtime(filename)
         creation_date = datetime.datetime.fromtimestamp(creation_date)
@@ -80,4 +84,5 @@ html_file = 'dashboard.html'
 COVID_HTML = '../wckdouglas.github.io/_includes/COVID.html'
 output_file(html_file)
 save(dashboard)
-markdown_html(html_file,COVID_HTML)
+if os.path.isfile(COVID):
+    markdown_html(html_file,COVID_HTML)
