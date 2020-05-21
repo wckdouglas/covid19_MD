@@ -34,7 +34,7 @@ jobs:
 
       - run:
           name: run_update
-          working_directory: ~/COVID19_MD
+          working_directory: /home/circleci/project/COVID19_MD
           command: |
             source ~/miniconda/bin/activate root
             ls
