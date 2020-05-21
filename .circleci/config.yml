@@ -28,6 +28,7 @@ jobs:
       - run:
           name: install_requirements
           command: >
+            source ~/miniconda/bin/activate root
             conda install --yes --quiet -n root  python=3.6
                  pandas geopandas beautifulsoup4 html5lib 
                  bokeh lxml numpy requests
