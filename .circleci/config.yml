@@ -1,0 +1,49 @@
+version: 2.1
+
+orbs:
+  python: circleci/python@0.2.1
+
+jobs:
+  build-and-test:
+    executor: python/default
+    steps:
+      - checkout
+
+      - restore_cache:
+          key: v1-miniconda-{{ .Branch }}
+
+      - run:
+          name: install-miniconda
+          command: |
+            if [[ ! -d /home/circleci/miniconda ]]; then
+                wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh &&
+                bash miniconda.sh -b -f -p /home/circleci/miniconda;
+            else
+                echo "Using cached miniconda";
+            fi
+            source ~/miniconda/bin/activate root
+            conda config --set always_yes yes
+            conda update -q conda
+
+      - run:
+          name: install requirements
+          command: >
+            conda install --yes --quiet -n root  python=3.6
+                 pandas geopandas beautifulsoup4 html5lib 
+                 bokeh lxml numpy requests
+
+      - save_cache:
+          key: v1-miniconda-{{ .Branch }}
+          paths:
+            - /home/circleci/miniconda
+
+      -run:
+          name: run-test
+          working_directory: ~/COVID19_MD
+          command: |
+            source ~/miniconda/bin/activate root
+            python update.py
+workflows:
+  main:
+    jobs:
+      - install-miniconda
