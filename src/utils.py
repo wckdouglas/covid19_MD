@@ -20,9 +20,7 @@ class Data():
                 '&lang=en&use_labels_for_header=true&csv_separator=%3B'
         self.population_url = 'https://www.maryland-demographics.com/zip_codes_by_population'
         self.geo_shape_url = 'https://www2.census.gov/geo/tiger/TIGER2019/ZCTA5/tl_2019_us_zcta510.zip'
-        self.MD_zip_data_url = 'https://opendata.arcgis.com/datasets'\
-                '/a991570b343e452cb47e98c2b5dfebd9_0/FeatureServer/0/'\
-                'query?where=1%3D1&outFields=*&outSR=4326&f=json' 
+        self.MD_zip_data_url ='https://opendata.arcgis.com/datasets/5f459467ee7a4ffda968139011f06c46_0.geojson' 
 
         #actual reading dat
         self.geo = self.read_map()
@@ -53,14 +51,14 @@ class Data():
         return out
 
     def read_zip_COVID(self):
-        r = requests.get(self.MD_zip_data_url) 
-        covid = pd.DataFrame([row['attributes'] for row in r.json()['features']]) \
+        covid = gpd.read_file(self.MD_zip_data_url) \
             .pipe(lambda d: d[~pd.isnull(d.ZIP_CODE)]) \
-            .drop('OBJECTID', axis=1)\
+            .drop(['OBJECTID','geometry'], axis=1)\
             .pipe(pd.melt, id_vars = ['ZIP_CODE'], 
                     var_name = 'Date', value_name = 'Cases') \
             .assign(Cases = lambda d: d.Cases.fillna(0)) \
-            .assign(Date = lambda d: pd.to_datetime(d.Date, format = '%m/%d/%Y')) \
+            .assign(Date = lambda d: d.Date.str.extract('([0-9]+_[0-9]+_[0-9]+)$', expand=False)) \
+            .assign(Date = lambda d: pd.to_datetime(d.Date, format = '%m_%d_%Y')) \
             .assign(ZIP_CODE = lambda d: d.ZIP_CODE.astype(int))   \
             .rename(columns = {'ZIP_CODE':'Zip'})
         min_date = str(covid.Date.min().date())
