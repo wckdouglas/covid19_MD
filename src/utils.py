@@ -8,12 +8,13 @@ import pandas as pd
 import geopandas as gpd
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('Data collector')
+cwd = os.path.dirname(os.path.abspath(__file__))
 
 class Data():
     def __init__(self, state = 'MD'):
         #data and URL path
         self.state = state
-        self.data_path = 'data/'
+        self.data_path = os.path.dirname(cwd) + '/data'
         self.zip_map_url = 'https://public.opendatasoft.com/explore/dataset/us-zip-code-latitude-and-longitude'\
                 '/download/?format=csv&timezone=America/New_York'\
                 '&lang=en&use_labels_for_header=true&csv_separator=%3B'
