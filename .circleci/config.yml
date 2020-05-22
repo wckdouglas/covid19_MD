@@ -39,7 +39,11 @@ jobs:
             source ~/miniconda/bin/activate root
             python update.py
 
+      - store_test_results:
+          path: /home/circleci/project  
+
 workflows:
   build-and-test:
     jobs:
       - build-and-test
+
