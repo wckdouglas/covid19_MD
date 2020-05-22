@@ -26,6 +26,7 @@ jobs:
             conda update -q conda
             source ~/miniconda/bin/activate root
             conda install --yes --quiet -n root  python=3.6 pandas geopandas beautifulsoup4 html5lib bokeh lxml numpy requests codecov
+            curl -s https://codecov.io/bash | bash
 
       - save_cache:
           key: v1-miniconda-{{ .Branch }}
