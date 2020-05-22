@@ -1,6 +1,5 @@
 # Maryland zip-code level COVID19 cases #
 
-[![Build Status](https://travis-ci.org/wckdouglas/covid19_MD.svg?branch=master)](https://travis-ci.org/wckdouglas/covid19_MD)
 [![CircleCI](https://circleci.com/gh/wckdouglas/covid19_MD.svg?style=svg)](https://app.circleci.com/pipelines/github/wckdouglas/covid19_MD)
 
 
