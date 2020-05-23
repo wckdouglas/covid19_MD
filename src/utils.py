@@ -1,7 +1,9 @@
 import glob
 import os
+import sys
 import requests
 import logging
+from tqdm import tqdm
 from bs4 import BeautifulSoup
 import numpy as np
 import pandas as pd
@@ -37,17 +39,32 @@ class Data():
         self.zip_codes = self.zip_map.Zip
         self.read_zip_COVID_old()
         self.read_population()
+    
+
+    def _download(self, zipfile):
+        logger.info('Downloading: %s to %s' %(self.geo_shape_url, zipfile))
+        r = requests.get(self.geo_shape_url, stream=True)
+        total_size = int(r.headers.get('content-length', 0))
+        block_size = 1024 #1 Kibibyte
+        t=tqdm(total=total_size, unit='iB', unit_scale=True)
+        with open(zipfile, 'wb') as zf:
+            for data in r.iter_content(block_size):
+                t.update(len(data))
+                zf.write(data)
+        t.close()
+        if total_size != 0 and t.n != total_size:
+            logger.error("Failed downloading")
+            sys.exit()
+        else:
+            logger.info('Downloaded %s' %zipfile)
+
         
     def download_zipfile(self, zipfile):
         '''
         get the zip file for geo information
         '''
-        logger.info('Downloading: %s to %s' %(self.geo_shape_url, zipfile))
-        r = requests.get(self.geo_shape_url)
-        with open(zipfile, 'wb') as zf:
-            zf.write(r.content)
-        logger.info('Downloaded %s' %zipfile)
-        command = 'unzip %s -d data' %zipfile
+        self._download(zipfile)
+        command = 'unzip %s -d %s' %(zipfile, self.data_path)
         logger.info(command)
         os.system(command)
         logger.info('unzipped %s' %zipfile)

@@ -6,3 +6,4 @@ bokeh
 lxml
 numpy
 requests
+tqdm
