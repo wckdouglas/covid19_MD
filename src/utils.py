@@ -52,7 +52,7 @@ class Data():
                 t.update(len(data))
                 zf.write(data)
         t.close()
-        if total_size != 0 and t.n != total_size:
+        if total_size == 0 and t.n != total_size:
             logger.error("Failed downloading")
             sys.exit()
         else:
