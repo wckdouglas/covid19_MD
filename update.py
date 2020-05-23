@@ -28,16 +28,16 @@ def is_updated(filename):
         return False
 
 
-ts_data = 'data/ts.csv'
-map_data = 'data/MD.geojson'
-if not (is_updated(ts_data) or is_updated(map_data)):
+ts_data_file = 'data/ts.csv'
+map_data_file = 'data/MD.geojson'
+if not is_updated(ts_data_file) or not is_updated(map_data_file):
     logger.info('Updating data: %s' %str(today))
     #daily update!!
-    get_data(ts_data_file = ts_data,
-            map_data_file = map_data) 
+    get_data(ts_data_file = ts_data_file,
+            map_data_file = map_data_file) 
 
 # read time series data and plot
-ts_data = pd.read_csv('data/ts.csv') \
+ts_data = pd.read_csv(ts_data_file) \
     .assign(Date = lambda d: pd.to_datetime(d.Date)) \
     .assign(Zip = lambda d: d.Zip.astype(str))
 new_zip_df = ts_data\
@@ -56,7 +56,7 @@ city_ts_plot = plot_time_series(city_df, new_city_df, grouping='City')
 
 
 # read map data and plot
-map_df = gpd.read_file('data/MD.geojson') \
+map_df = gpd.read_file(map_data_file) \
     .rename(columns = {'per_population':'Total',
                         'increase':'Daily'})
 today = str(map_df.Date.astype(str).unique()[0]).split('T')[0]

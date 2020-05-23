@@ -23,35 +23,52 @@ class Data():
         self.MD_zip_data_url ='https://opendata.arcgis.com/datasets/5f459467ee7a4ffda968139011f06c46_0.geojson' 
 
         #actual reading dat
-        self.geo = self.read_map()
-        self.zip_map = self.read_zip_map()
+        self.geo = None
+        self.zip_map = None 
+        self.zip_covid = None 
+        self.zip_population = None
+
+    def get(self):
+        '''
+        fill in data
+        '''
+        self.read_map()
+        self.read_zip_map()
         self.zip_codes = self.zip_map.Zip
-        self.zip_covid = self.read_zip_COVID_old()
-        self.zip_population = self.read_population()
+        self.read_zip_COVID_old()
+        self.read_population()
         
     def download_zipfile(self, zipfile):
+        '''
+        get the zip file for geo information
+        '''
         with open(zipfile, 'wb') as out:
             downloaded = requests.get(self.geo_shape_url)
             out.write(downloaded.content)
         logger.info('Downloaded %s' %zipfile)
-        os.system('unzip  %s -d data' %zipfile)
+        os.system('unzip %s -d data' %zipfile)
         logger.info('unzipped %s' %zipfile)
 
         
     def read_map(self):
+        '''
+        read geoshape of zip codes
+        '''
         zipfile = self.data_path + '/tl_2019_us_zcta510.zip'
         shapefile = zipfile.replace('.zip','.shp')
         if not os.path.isfile(shapefile):
             self.download_zipfile(zipfile)
         #out = gpd.read_file('zip://' + zipfile) \
-        out = gpd.read_file(shapefile) \
+        self.geo = gpd.read_file(shapefile) \
             .rename(columns = {'ZCTA5CE10':'Zip'}) \
             .assign(Zip = lambda d: d.Zip.astype(int))
         logger.info('Loaded geo shape')
-        return out
 
     def read_zip_COVID(self):
-        covid = gpd.read_file(self.MD_zip_data_url) \
+        '''
+        cases count per zip code per day
+        '''
+        self.zip_covid = gpd.read_file(self.MD_zip_data_url) \
             .pipe(lambda d: d[~pd.isnull(d.ZIP_CODE)]) \
             .drop(['OBJECTID','geometry'], axis=1)\
             .pipe(pd.melt, id_vars = ['ZIP_CODE'], 
@@ -61,30 +78,37 @@ class Data():
             .assign(Date = lambda d: pd.to_datetime(d.Date, format = '%m_%d_%Y')) \
             .assign(ZIP_CODE = lambda d: d.ZIP_CODE.astype(int))   \
             .rename(columns = {'ZIP_CODE':'Zip'})
-        min_date = str(covid.Date.min().date())
-        max_date = str(covid.Date.max().date())
+        min_date = str(self.zip_covid.Date.min().date())
+        max_date = str(self.zip_covid.Date.max().date())
         logger.info('Loaded %s to %s' %(min_date, max_date))
-        return covid
 
 
     def read_zip_COVID_old(self):
+        '''
+        cases count per zip code per day
+        '''
         covid_data = {}
         for i, csv in enumerate(glob.glob(self.data_path + '/*.tsv')):
             date = os.path.basename(csv.replace('.tsv',''))
             covid_data[date] = pd.read_csv(csv, names = ['Zip','Cases'],sep='\t') \
                 .assign(Cases = lambda d: d.Cases.str.replace(' Cases','').astype(int))
-        logger.info('Loaded daily COVID cases (%i days)' %(i+1))
-        return pd.concat(date_data.assign(Date = date) for date, date_data in covid_data.items()) \
+        self.zip_covid = pd.concat(date_data.assign(Date = date) for date, date_data in covid_data.items()) \
             .assign(Date = lambda d: pd.to_datetime(d.Date, format = '%Y-%m-%d'))
+        logger.info('Loaded daily COVID cases (%i days)' %(i+1))
 
 
     def read_zip_map(self):
-        out =  pd.read_csv(self.zip_map_url, sep=';') \
+        '''
+        zip city information
+        '''
+        self.zip_map =  pd.read_csv(self.zip_map_url, sep=';') \
             .query('State == "%s"' %self.state)
         logger.info('Retrieved map info')
-        return out
 
     def read_population(self):
+        '''
+        get population data for each zip code
+        '''
         http = requests.get(self.population_url)
         soup = BeautifulSoup(http.content)
         table = soup.find_all('table')
@@ -104,9 +128,9 @@ class Data():
                     row_dict['Population'] = int(row['Population'])/2
             rows.append(row_dict)
         logger.info('Retrieved populations')
-        return pd.DataFrame(rows)
+        self.zip_population = pd.DataFrame(rows)
     
-    
+
     
 def markdown_html(html_file, out_file):
     with open(html_file) as html,\
@@ -124,6 +148,7 @@ def markdown_html(html_file, out_file):
 
 def get_data(ts_data_file = '../data/ts.csv', map_data_file = '../data/MD.geojson'):
     maryland = Data(state='MD')
+    maryland.get()
     data = maryland.geo\
         .merge(maryland.zip_map, on ='Zip', how = 'right')\
         .merge(maryland.zip_covid, on ='Zip', how ='left')\
