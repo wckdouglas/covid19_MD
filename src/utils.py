@@ -42,10 +42,10 @@ class Data():
         '''
         get the zip file for geo information
         '''
-        logger.info('Downloading: %s' %zipfile)
-        command = 'wget -O %s %s' %(zipfile, self.geo_shape_url)
-        os.system(command)
-        logger.info(command)
+        logger.info('Downloading: %s to %s' %(self.geo_shape_url, zipfile))
+        r = requests.get(self.geo_shape_url)
+        with open(zipfile, 'wb') as zf:
+            zf.write(r.content)
         logger.info('Downloaded %s' %zipfile)
         command = 'unzip %s -d data' %zipfile
         logger.info(command)
