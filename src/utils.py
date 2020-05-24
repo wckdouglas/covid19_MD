@@ -37,7 +37,8 @@ class Data():
         self.read_map()
         self.read_zip_map()
         self.zip_codes = self.zip_map.Zip
-        self.read_zip_COVID_old()
+        #self.read_zip_COVID_old()
+        self.read_zip_COVID()
         self.read_population()
     
 
