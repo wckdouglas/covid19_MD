@@ -30,15 +30,17 @@ class Data():
         self.zip_covid = None 
         self.zip_population = None
 
-    def get(self):
+    def get(self, use_db=False):
         '''
         fill in data
         '''
         self.read_map()
         self.read_zip_map()
         self.zip_codes = self.zip_map.Zip
-        #self.read_zip_COVID_old()
-        self.read_zip_COVID()
+        if use_db:
+            self.read_zip_COVID()
+        else:
+            self.read_zip_COVID_old()
         self.read_population()
     
 
@@ -167,9 +169,9 @@ def markdown_html(html_file, out_file):
     logger.info('Written %i lines from %i lines to %s' %(outline, inline, out_file))
 
 
-def get_data(ts_data_file = '../data/ts.csv', map_data_file = '../data/MD.geojson'):
+def get_data(ts_data_file = '../data/ts.csv', map_data_file = '../data/MD.geojson', use_db=False):
     maryland = Data(state='MD')
-    maryland.get()
+    maryland.get(use_db = use_db)
     data = maryland.geo\
         .merge(maryland.zip_map, on ='Zip', how = 'right')\
         .merge(maryland.zip_covid, on ='Zip', how ='left')\

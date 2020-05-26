@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import os
+import sys
 import datetime
 import pandas as pd
 import geopandas as gpd
@@ -28,13 +29,17 @@ def is_updated(filename):
         return False
 
 
+if len(sys.argv) != 2:
+    sys.exit('[usage] python %s <use db? [yes|no]>' %sys.argv[0])
+use_db = True if sys.argv[1] == 'yes' else False
 ts_data_file = 'data/ts.csv'
 map_data_file = 'data/MD.geojson'
 if not is_updated(ts_data_file) or not is_updated(map_data_file):
     logger.info('Updating data: %s' %str(today))
     #daily update!!
     get_data(ts_data_file = ts_data_file,
-            map_data_file = map_data_file) 
+            map_data_file = map_data_file,
+            use_db = use_db) 
 
 # read time series data and plot
 ts_data = pd.read_csv(ts_data_file) \
