@@ -94,11 +94,15 @@ class Data():
         self.zip_covid = gpd.read_file(self.MD_zip_data_url) \
             .pipe(lambda d: d[~pd.isnull(d.ZIP_CODE)]) \
             .drop(['OBJECTID','geometry'], axis=1)\
+            .pipe(pd.DataFrame) \
             .pipe(pd.melt, id_vars = ['ZIP_CODE'], 
                     var_name = 'Date', value_name = 'Cases') \
             .assign(Cases = lambda d: d.Cases.fillna(0)) \
             .assign(Date = lambda d: d.Date.str.extract('([0-9]+_[0-9]+_[0-9]+)$', expand=False)) \
             .assign(Date = lambda d: pd.to_datetime(d.Date, format = '%m_%d_%Y')) \
+            .assign(ZIP_CODE = lambda d: d.ZIP_CODE.where(d.ZIP_CODE != "21802", "21804"))\
+            .groupby(['ZIP_CODE','Date'], as_index=False)\
+            .agg({'Cases':'sum'}) \
             .assign(ZIP_CODE = lambda d: d.ZIP_CODE.astype(int))   \
             .rename(columns = {'ZIP_CODE':'Zip'})
         min_date = str(self.zip_covid.Date.min().date())
