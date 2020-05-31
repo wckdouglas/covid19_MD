@@ -18,16 +18,27 @@ logger = logging.getLogger('Update plot')
 today = datetime.date.today()
 
 def get_opt():
-    parser = argparse.ArgumentParser(description='Update COVID19 dashboard',
+    parser = argparse.ArgumentParser(description='Tools for updating dashboard')
+    subparsers = parser.add_subparsers(dest='subcommand')
+    subparsers.required = True
+
+    #chekc update
+    check = subparsers.add_parser(name = 'check',
+                                description='check if MD gov database is updated?')
+
+    # update dashboard 
+    update = subparsers.add_parser(name = 'update', description='Update COVID19 dashboard',
                                     formatter_class=argparse.RawTextHelpFormatter)
-    parser.add_argument('--use-db', dest = 'use_db', action = 'store_true', 
+    update.add_argument('--use-db', dest = 'use_db', action = 'store_true', 
                         help='Use databse from MD government?\n'\
                             '(default: False; use collected data in ./data/*tsv)')
-    parser.add_argument('--refresh', action = 'store_true', 
+    update.add_argument('--refresh', action = 'store_true', 
                         help='Fetch data and create data table?\n'\
                             '(default: False; only create if the data table is not created today)')
+
     args = parser.parse_args() 
     return args
+
 
 
 def is_updated(filename):
@@ -95,8 +106,8 @@ def map_plots(map_data_file):
     return zip_map_plot, city_map_plot
 
 
-def main():
-    args = get_opt()
+def update(args):
+    logger.info('Updating dashboard')
     ts_data_file = 'data/ts.csv'
     map_data_file = 'data/MD.geojson'
     update_data(args, ts_data_file, map_data_file)
@@ -116,9 +127,19 @@ def main():
     if os.path.isfile(COVID_HTML):
         markdown_html(html_file,COVID_HTML)
 
+def check_update():
+    logger.info('Checking database')
+    dat = Data()
+    dat.read_zip_COVID()
+    print(dat.zip_covid.tail())
+
 
 if __name__ == '__main__':
-    main()
+    args = get_opt()
+    if args.subcommand == 'update':
+        update(args)
+    elif args.subcommand == 'check':
+        check_update()
 
 
 
