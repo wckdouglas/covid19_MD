@@ -12,10 +12,24 @@ from bokeh.models.widgets import Tabs, Panel
 from src.plotting import plot_map, plot_time_series
 from src.utils import Data, markdown_html, get_data
 import logging
-
+import argparse
 logging.basicConfig(level = logging.INFO)
 logger = logging.getLogger('Update plot')
 today = datetime.date.today()
+
+def get_opt():
+    parser = argparse.ArgumentParser(description='Update COVID19 dashboard',
+                                    formatter_class=argparse.RawTextHelpFormatter)
+    parser.add_argument('--use-db', dest = 'use_db', action = 'store_true', 
+                        help='Use databse from MD government?\n'\
+                            '(default: False; use collected data in ./data/*tsv)')
+    parser.add_argument('--refresh', action = 'store_true', 
+                        help='Fetch data and create data table?\n'\
+                            '(default: False; only create if the data table is not created today)')
+    args = parser.parse_args() 
+    return args
+
+
 def is_updated(filename):
     '''
     check if the file exist
@@ -24,70 +38,87 @@ def is_updated(filename):
     if os.path.isfile(filename):
         creation_date = os.path.getmtime(filename)
         creation_date = datetime.datetime.fromtimestamp(creation_date)
-        return today == creation_date.date() 
+        return creation_date.date() == today
     else:
         return False
 
 
-if len(sys.argv) != 2:
-    sys.exit('[usage] python %s <use db? [yes|no]>' %sys.argv[0])
-use_db = True if sys.argv[1] == 'yes' else False
-ts_data_file = 'data/ts.csv'
-map_data_file = 'data/MD.geojson'
-if not is_updated(ts_data_file) or not is_updated(map_data_file):
-    logger.info('Updating data: %s' %str(today))
-    #daily update!!
-    get_data(ts_data_file = ts_data_file,
-            map_data_file = map_data_file,
-            use_db = use_db) 
+def update_data(args, ts_data_file, map_data_file):
+    '''
+    write new data to file
+    '''
+    if not is_updated(ts_data_file) or not is_updated(map_data_file) or args.refresh:
+        logger.info('Updating data: %s' %str(today))
+        #daily update!!
+        get_data(ts_data_file = ts_data_file,
+                map_data_file = map_data_file,
+                use_db = args.use_db) 
 
-# read time series data and plot
-ts_data = pd.read_csv(ts_data_file) \
-    .assign(Date = lambda d: pd.to_datetime(d.Date)) \
-    .assign(Zip = lambda d: d.Zip.astype(str))
-new_zip_df = ts_data\
-    .assign(increase = lambda d: d.groupby('Zip').Cases.transform(lambda x: x - np.roll(x,1)))\
-    .query('increase>=0')
-zip_ts_plot = plot_time_series(ts_data, new_zip_df, grouping='Zip')
+def ts_plots(ts_data_file):
+    # read time series data and plot
+    ts_data = pd.read_csv(ts_data_file) \
+        .assign(Date = lambda d: pd.to_datetime(d.Date)) \
+        .assign(Zip = lambda d: d.Zip.astype(str))
+    new_zip_df = ts_data\
+        .assign(increase = lambda d: d.groupby('Zip').Cases.transform(lambda x: x - np.roll(x,1)))\
+        .query('increase>=0')
+    zip_ts_plot = plot_time_series(ts_data, new_zip_df, grouping='Zip')
 
-city_df = ts_data\
-    .groupby(['City','Date','formatted_date'], as_index=False)\
-    .agg({'Cases':'sum'})
-new_city_df = new_zip_df\
-    .groupby(['City','Date','formatted_date'], as_index=False)\
-    .agg({'Cases':'sum','increase':'sum'})
-city_ts_plot = plot_time_series(city_df, new_city_df, grouping='City')
-
-
-
-# read map data and plot
-map_df = gpd.read_file(map_data_file) \
-    .rename(columns = {'per_population':'Total',
-                        'increase':'Daily'})
-today = str(map_df.Date.astype(str).unique()[0]).split('T')[0]
-zip_map_plot = plot_map(map_df, with_zip = True, today = today)
-
-map_df = gpd.read_file('data/MD.geojson') \
-    .rename(columns = {'per_population':'Total',
-                        'increase':'Daily'}) \
-    .drop('Zip', axis=1)\
-    .assign(Population = lambda d: d.Population.astype(float))\
-    .dissolve(by = ['City', 'State'], aggfunc='sum')\
-    .assign(Total = lambda d: d.Cases/d.Population)\
-    .assign(per_populatin_increase = lambda d: d.Daily/d.Population) \
-    .reset_index()
-city_map_plot = plot_map(map_df, with_zip = False, today = today)
+    city_df = ts_data\
+        .groupby(['City','Date','formatted_date'], as_index=False)\
+        .agg({'Cases':'sum'})
+    new_city_df = new_zip_df\
+        .groupby(['City','Date','formatted_date'], as_index=False)\
+        .agg({'Cases':'sum','increase':'sum'})
+    city_ts_plot = plot_time_series(city_df, new_city_df, grouping='City')
+    return zip_ts_plot, city_ts_plot
 
 
-# combined figure
-Zip_panel = Panel(child=column(zip_ts_plot, zip_map_plot,sizing_mode="stretch_both"), title='By zip code')
-City_panel = Panel(child=column(city_ts_plot, city_map_plot,sizing_mode="stretch_both"), title='By City')
-dashboard = Tabs(tabs=[Zip_panel, City_panel])
+def map_plots(map_data_file):
+    # read map data and plot
+    map_df = gpd.read_file(map_data_file) \
+        .rename(columns = {'per_population':'Total',
+                            'increase':'Daily'})
+    today = str(map_df.Date.astype(str).unique()[0]).split('T')[0]
+    zip_map_plot = plot_map(map_df, with_zip = True, today = today)
 
-#p = column(ts_plot, city_ts_plot, map_plot)
-html_file = 'dashboard.html'
-COVID_HTML = '../wckdouglas.github.io/_includes/COVID.html'
-output_file(html_file)
-save(dashboard)
-if os.path.isfile(COVID_HTML):
-    markdown_html(html_file,COVID_HTML)
+    map_df = gpd.read_file('data/MD.geojson') \
+        .rename(columns = {'per_population':'Total',
+                            'increase':'Daily'}) \
+        .drop('Zip', axis=1)\
+        .assign(Population = lambda d: d.Population.astype(float))\
+        .dissolve(by = ['City', 'State'], aggfunc='sum')\
+        .assign(Total = lambda d: d.Cases/d.Population)\
+        .assign(per_populatin_increase = lambda d: d.Daily/d.Population) \
+        .reset_index()
+    city_map_plot = plot_map(map_df, with_zip = False, today = today)
+    return zip_map_plot, city_map_plot
+
+
+def main():
+    args = get_opt()
+    ts_data_file = 'data/ts.csv'
+    map_data_file = 'data/MD.geojson'
+    update_data(args, ts_data_file, map_data_file)
+    zip_ts_plot, city_ts_plot = ts_plots(ts_data_file)
+    zip_map_plot, city_map_plot = ts_plots(map_data_file)
+
+    # combined figure
+    Zip_panel = Panel(child=column(zip_ts_plot, zip_map_plot,sizing_mode="stretch_both"), title='By zip code')
+    City_panel = Panel(child=column(city_ts_plot, city_map_plot,sizing_mode="stretch_both"), title='By City')
+    dashboard = Tabs(tabs=[Zip_panel, City_panel])
+
+    #p = column(ts_plot, city_ts_plot, map_plot)
+    html_file = 'dashboard.html'
+    COVID_HTML = '../wckdouglas.github.io/_includes/COVID.html'
+    output_file(html_file)
+    save(dashboard)
+    if os.path.isfile(COVID_HTML):
+        markdown_html(html_file,COVID_HTML)
+
+
+if __name__ == '__main__':
+    main()
+
+
+
