@@ -17,9 +17,12 @@ install:
     - conda info -a
     - conda create -q -n test-environment python=$TRAVIS_PYTHON_VERSION
       pandas geopandas beautifulsoup4 html5lib bokeh lxml numpy requests 
-      tqdm
+      tqdm codecov pytest-cov
     - source activate test-environment
 
 # # command to run tests
 script: 
-    - python update.py yes
+    - python update.py check
+    - python update.py update --refresh --use-db
+    - python update.py update --refresh 
+
