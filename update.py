@@ -70,12 +70,12 @@ def ts_plots(ts_data_file):
     ts_data = pd.read_csv(ts_data_file) \
         .assign(Date = lambda d: pd.to_datetime(d.Date)) \
         .assign(Zip = lambda d: d.Zip.astype(str))
-    new_zip_df = ts_data\
+    new_zip_df = ts_data \
         .assign(increase = lambda d: d.groupby('Zip').Cases.transform(lambda x: x - np.roll(x,1)))\
         .query('increase>=0')
     zip_ts_plot = plot_time_series(ts_data, new_zip_df, grouping='Zip')
 
-    city_df = ts_data\
+    city_df = ts_data \
         .groupby(['City','Date','formatted_date'], as_index=False)\
         .agg({'Cases':'sum'})
     new_city_df = new_zip_df\
@@ -112,7 +112,7 @@ def update(args):
     map_data_file = 'data/MD.geojson'
     update_data(args, ts_data_file, map_data_file)
     zip_ts_plot, city_ts_plot = ts_plots(ts_data_file)
-    zip_map_plot, city_map_plot = ts_plots(map_data_file)
+    zip_map_plot, city_map_plot = map_plots(map_data_file)
 
     # combined figure
     Zip_panel = Panel(child=column(zip_ts_plot, zip_map_plot,sizing_mode="stretch_both"), title='By zip code')
