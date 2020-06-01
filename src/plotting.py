@@ -121,6 +121,7 @@ class TSplot():
         self.p.xgrid.grid_line_color = None
         self.p.ygrid.grid_line_color = None
         self.p.title.text_font_size = '25pt'
+        self.p.xaxis[0].ticker.desired_num_ticks  = 10
         self.p.xaxis.axis_label = 'Date'
         self.p.yaxis.axis_label = ylabel
         self.p.xaxis.axis_label_text_font_size = "25pt"
