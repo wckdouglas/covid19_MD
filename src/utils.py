@@ -217,7 +217,3 @@ def get_data(ts_data_file = '../data/ts.csv', map_data_file = '../data/MD.geojso
         .assign(per_population_increase = lambda d: 1e6*d['increase'].astype(int)/d.Population.astype(int))
     map_df.to_file(map_data_file, driver='GeoJSON')
     logger.info('Written %s' %map_data_file)
-
-
-if __name__ == '__main__':
-    get_data()

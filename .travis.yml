@@ -22,7 +22,8 @@ install:
 
 # # command to run tests
 script: 
-    - python update.py check
-    - python update.py update --refresh --use-db
-    - python update.py update --refresh 
+    - coverage run -m pytest
+  
+after_success:
+    - codecov
 
