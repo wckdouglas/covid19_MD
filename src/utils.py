@@ -34,13 +34,13 @@ class Data():
         '''
         fill in data
         '''
-        self.read_map()
-        self.read_zip_map()
-        self.zip_codes = self.zip_map.Zip
         if use_db:
             self.read_zip_COVID()
         else:
             self.read_zip_COVID_old()
+        self.read_map()
+        self.read_zip_map()
+        self.zip_codes = self.zip_map.Zip
         self.read_population()
     
 
@@ -114,6 +114,7 @@ class Data():
         '''
         cases count per zip code per day
         '''
+        logger.info('Using data from ./data/')
         covid_data = {}
         for i, csv in enumerate(glob.glob(self.data_path + '/*.tsv')):
             date = os.path.basename(csv.replace('.tsv',''))

@@ -1,589 +1,295 @@
-20601 - 216 Cases
-
-20602 - 226 Cases
-
-20603 - 277 Cases
-
-20607 - 99 Cases
-
-20613 - 146 Cases
-
-20616 - 44 Cases
-
-20619 - 26 Cases
-
-20621 - 10 Cases
-
-20622 - 213 Cases
-
-20623 - 29 Cases
-
-20624 - 8 Cases
-
-20628 - 8 Cases
-
-20634 - 37 Cases
-
-20636 - 20 Cases
-
-20637 - 30 Cases
-
-20639 - 75 Cases
-
-20640 - 48 Cases
-
-20646 - 145 Cases
-
-20650 - 25 Cases
-
-20653 - 110 Cases
-
-20657 - 63 Cases
-
-20659 - 78 Cases
-
-20662 - 18 Cases
-
-20664 - 22 Cases
-
-20675 - 9 Cases
-
-20676 - 10 Cases
-
-20677 - 12 Cases
-
-20678 - 78 Cases
-
-20685 - 17 Cases
-
-20689 - 10 Cases
-
-20695 - 72 Cases
-
-20705 - 628 Cases
-
-20706 - 1,117 Cases
-
-20707 - 617 Cases
-
-20708 - 536 Cases
-
-20710 - 252 Cases
-
-20711 - 70 Cases
-
-20712 - 197 Cases
-
-20714 - 18 Cases
-
-20715 - 204 Cases
-
-20716 - 238 Cases
-
-20720 - 235 Cases
-
-20721 - 295 Cases
-
-20722 - 198 Cases
-
-20723 - 317 Cases
-
-20724 - 314 Cases
-
-20732 - 33 Cases
-
-20733 - 15 Cases
-
-20735 - 588 Cases
-
-20736 - 33 Cases
-
-20737 - 837 Cases
-
-20740 - 322 Cases
-
-20743 - 543 Cases
-
-20744 - 648 Cases
-
-20745 - 479 Cases
-
-20746 - 364 Cases
-
-20747 - 546 Cases
-
-20748 - 502 Cases
-
-20754 - 20 Cases
-
-20755 - 11 Cases
-
-20759 - 14 Cases
-
-20763 - 32 Cases
-
-20764 - 19 Cases
-
-20769 - 116 Cases
-
-20770 - 335 Cases
-
-20772 - 476 Cases
-
-20774 - 462 Cases
-
-20776 - 15 Cases
-
-20777 - 9 Cases
-
-20778 - 8 Cases
-
-20781 - 336 Cases
-
-20782 - 958 Cases
-
-20783 - 1,996 Cases
-
-20784 - 986 Cases
-
-20785 - 723 Cases
-
-20794 - 289 Cases
-
-20814 - 212 Cases
-
-20815 - 172 Cases
-
-20816 - 57 Cases
-
-20817 - 199 Cases
-
-20832 - 147 Cases
-
-20833 - 43 Cases
-
-20837 - 27 Cases
-
-20841 - 58 Cases
-
-20850 - 462 Cases
-
-20851 - 203 Cases
-
-20852 - 326 Cases
-
-20853 - 401 Cases
-
-20854 - 274 Cases
-
-20855 - 110 Cases
-
-20860 - 59 Cases
-
-20861 - 9 Cases
-
-20866 - 143 Cases
-
-20871 - 106 Cases
-
-20872 - 107 Cases
-
-20874 - 598 Cases
-
-20876 - 288 Cases
-
-20877 - 817 Cases
-
-20878 - 381 Cases
-
-20879 - 356 Cases
-
-20882 - 80 Cases
-
-20886 - 550 Cases
-
-20895 - 166 Cases
-
-20901 - 543 Cases
-
-20902 - 1,116 Cases
-
-20903 - 822 Cases
-
-20904 - 901 Cases
-
-20905 - 168 Cases
-
-20906 - 1,425 Cases
-
-20910 - 454 Cases
-
-20912 - 426 Cases
-
-21001 - 87 Cases
-
-21009 - 98 Cases
-
-21012 - 132 Cases
-
-21014 - 170 Cases
-
-21015 - 62 Cases
-
-21017 - 20 Cases
-
-21029 - 44 Cases
-
-21030 - 207 Cases
-
-21032 - 70 Cases
-
-21034 - 11 Cases
-
-21035 - 17 Cases
-
-21036 - 12 Cases
-
-21037 - 172 Cases
-
-21040 - 136 Cases
-
-21042 - 121 Cases
-
-21043 - 293 Cases
-
-21044 - 253 Cases
-
-21045 - 369 Cases
-
-21046 - 84 Cases
-
-21047 - 29 Cases
-
-21048 - 32 Cases
-
-21050 - 164 Cases
-
-21053 - 10 Cases
-
-21054 - 109 Cases
-
-21057 - 23 Cases
-
-21060 - 303 Cases
-
-21061 - 476 Cases
-
-21074 - 37 Cases
-
-21075 - 258 Cases
-
-21076 - 142 Cases
-
-21078 - 35 Cases
-
-21084 - 27 Cases
-
-21085 - 74 Cases
-
-21087 - 15 Cases
-
-21090 - 71 Cases
-
-21093 - 158 Cases
-
-21102 - 69 Cases
-
-21104 - 14 Cases
-
-21108 - 76 Cases
-
-21111 - 9 Cases
-
-21113 - 148 Cases
-
-21114 - 111 Cases
-
-21117 - 440 Cases
-
-21122 - 257 Cases
-
-21128 - 43 Cases
-
-21131 - 14 Cases
-
-21132 - 10 Cases
-
-21133 - 460 Cases
-
-21136 - 269 Cases
-
-21144 - 204 Cases
-
-21146 - 85 Cases
-
-21152 - 15 Cases
-
-21154 - 11 Cases
-
-21157 - 212 Cases
-
-21158 - 110 Cases
-
-21161 - 14 Cases
-
-21162 - 16 Cases
-
-21163 - 24 Cases
-
-21201 - 95 Cases
-
-21202 - 218 Cases
-
-21204 - 164 Cases
-
-21205 - 188 Cases
-
-21206 - 451 Cases
-
-21207 - 593 Cases
-
-21208 - 393 Cases
-
-21209 - 139 Cases
-
-21210 - 22 Cases
-
-21211 - 73 Cases
-
-21212 - 140 Cases
-
-21213 - 275 Cases
-
-21214 - 126 Cases
-
-21215 - 706 Cases
-
-21216 - 221 Cases
-
-21217 - 271 Cases
-
-21218 - 343 Cases
-
-21219 - 39 Cases
-
-21220 - 343 Cases
-
-21221 - 320 Cases
-
-21222 - 513 Cases
-
-21223 - 264 Cases
-
-21224 - 1,033 Cases
-
-21225 - 315 Cases
-
-21226 - 36 Cases
-
-21227 - 329 Cases
-
-21228 - 624 Cases
-
-21229 - 530 Cases
-
-21230 - 236 Cases
-
-21231 - 157 Cases
-
-21234 - 489 Cases
-
-21236 - 190 Cases
-
-21237 - 333 Cases
-
-21239 - 276 Cases
-
-21244 - 413 Cases
-
-21286 - 102 Cases
-
-21401 - 422 Cases
-
-21403 - 505 Cases
-
-21409 - 68 Cases
-
-21502 - 146 Cases
-
-21532 - 25 Cases
-
-21601 - 79 Cases
-
-21607 - 11 Cases
-
-21613 - 106 Cases
-
-21617 - 39 Cases
-
-21619 - 15 Cases
-
-21620 - 117 Cases
-
-21629 - 27 Cases
-
-21631 - 8 Cases
-
-21632 - 55 Cases
-
-21635 - 11 Cases
-
-21636 - 10 Cases
-
-21638 - 14 Cases
-
-21639 - 19 Cases
-
-21640 - 24 Cases
-
-21643 - 27 Cases
-
-21649 - 105 Cases
-
-21651 - 27 Cases
-
-21655 - 21 Cases
-
-21660 - 10 Cases
-
-21661 - 13 Cases
-
-21663 - 13 Cases
-
-21666 - 29 Cases
-
-21668 - 18 Cases
-
-21678 - 17 Cases
-
-21701 - 361 Cases
-
-21702 - 609 Cases
-
-21703 - 552 Cases
-
-21704 - 115 Cases
-
-21710 - 13 Cases
-
-21713 - 84 Cases
-
-21716 - 35 Cases
-
-21722 - 13 Cases
-
-21727 - 22 Cases
-
-21737 - 8 Cases
-
-21738 - 15 Cases
-
-21740 - 231 Cases
-
-21742 - 83 Cases
-
-21750 - 13 Cases
-
-21754 - 25 Cases
-
-21755 - 32 Cases
-
-21756 - 12 Cases
-
-21757 - 37 Cases
-
-21758 - 17 Cases
-
-21769 - 21 Cases
-
-21770 - 28 Cases
-
-21771 - 219 Cases
-
-21773 - 11 Cases
-
-21774 - 54 Cases
-
-21776 - 26 Cases
-
-21777 - 9 Cases
-
-21778 - 8 Cases
-
-21782 - 13 Cases
-
-21783 - 19 Cases
-
-21784 - 215 Cases
-
-21787 - 32 Cases
-
-21788 - 38 Cases
-
-21791 - 13 Cases
-
-21793 - 68 Cases
-
-21794 - 22 Cases
-
-21795 - 24 Cases
-
-21797 - 27 Cases
-
-21798 - 8 Cases
-
-21801 - 305 Cases
-
-21804 - 491 Cases
-
-21811 - 125 Cases
-
-21813 - 11 Cases
-
-21817 - 10 Cases
-
-21822 - 12 Cases
-
-21826 - 44 Cases
-
-21830 - 12 Cases
-
-21842 - 20 Cases
-
-21849 - 12 Cases
-
-21850 - 12 Cases
-
-21851 - 60 Cases
-
-21853 - 40 Cases
-
-21863 - 30 Cases
-
-21874 - 9 Cases
-
-21875 - 27 Cases
-
-21901 - 38 Cases
-
-21903 - 12 Cases
-
-21904 - 12 Cases
-
-21911 - 132 Cases
-
-21912 - 20 Cases
-
-21918 - 11 Cases
-
-21921 - 124 Cases
+20601	216 Cases
+20602	226 Cases
+20603	277 Cases
+20607	99 Cases
+20613	146 Cases
+20616	44 Cases
+20619	26 Cases
+20621	10 Cases
+20622	213 Cases
+20623	29 Cases
+20624	8 Cases
+20628	8 Cases
+20634	37 Cases
+20636	20 Cases
+20637	30 Cases
+20639	75 Cases
+20640	48 Cases
+20646	145 Cases
+20650	25 Cases
+20653	110 Cases
+20657	63 Cases
+20659	78 Cases
+20662	18 Cases
+20664	22 Cases
+20675	9 Cases
+20676	10 Cases
+20677	12 Cases
+20678	78 Cases
+20685	17 Cases
+20689	10 Cases
+20695	72 Cases
+20705	628 Cases
+20706	1117 Cases
+20707	617 Cases
+20708	536 Cases
+20710	252 Cases
+20711	70 Cases
+20712	197 Cases
+20714	18 Cases
+20715	204 Cases
+20716	238 Cases
+20720	235 Cases
+20721	295 Cases
+20722	198 Cases
+20723	317 Cases
+20724	314 Cases
+20732	33 Cases
+20733	15 Cases
+20735	588 Cases
+20736	33 Cases
+20737	837 Cases
+20740	322 Cases
+20743	543 Cases
+20744	648 Cases
+20745	479 Cases
+20746	364 Cases
+20747	546 Cases
+20748	502 Cases
+20754	20 Cases
+20755	11 Cases
+20759	14 Cases
+20763	32 Cases
+20764	19 Cases
+20769	116 Cases
+20770	335 Cases
+20772	476 Cases
+20774	462 Cases
+20776	15 Cases
+20777	9 Cases
+20778	8 Cases
+20781	336 Cases
+20782	958 Cases
+20783	1996 Cases
+20784	986 Cases
+20785	723 Cases
+20794	289 Cases
+20814	212 Cases
+20815	172 Cases
+20816	57 Cases
+20817	199 Cases
+20832	147 Cases
+20833	43 Cases
+20837	27 Cases
+20841	58 Cases
+20850	462 Cases
+20851	203 Cases
+20852	326 Cases
+20853	401 Cases
+20854	274 Cases
+20855	110 Cases
+20860	59 Cases
+20861	9 Cases
+20866	143 Cases
+20871	106 Cases
+20872	107 Cases
+20874	598 Cases
+20876	288 Cases
+20877	817 Cases
+20878	381 Cases
+20879	356 Cases
+20882	80 Cases
+20886	550 Cases
+20895	166 Cases
+20901	543 Cases
+20902	1116 Cases
+20903	822 Cases
+20904	901 Cases
+20905	168 Cases
+20906	1425 Cases
+20910	454 Cases
+20912	426 Cases
+21001	87 Cases
+21009	98 Cases
+21012	132 Cases
+21014	170 Cases
+21015	62 Cases
+21017	20 Cases
+21029	44 Cases
+21030	207 Cases
+21032	70 Cases
+21034	11 Cases
+21035	17 Cases
+21036	12 Cases
+21037	172 Cases
+21040	136 Cases
+21042	121 Cases
+21043	293 Cases
+21044	253 Cases
+21045	369 Cases
+21046	84 Cases
+21047	29 Cases
+21048	32 Cases
+21050	164 Cases
+21053	10 Cases
+21054	109 Cases
+21057	23 Cases
+21060	303 Cases
+21061	476 Cases
+21074	37 Cases
+21075	258 Cases
+21076	142 Cases
+21078	35 Cases
+21084	27 Cases
+21085	74 Cases
+21087	15 Cases
+21090	71 Cases
+21093	158 Cases
+21102	69 Cases
+21104	14 Cases
+21108	76 Cases
+21111	9 Cases
+21113	148 Cases
+21114	111 Cases
+21117	440 Cases
+21122	257 Cases
+21128	43 Cases
+21131	14 Cases
+21132	10 Cases
+21133	460 Cases
+21136	269 Cases
+21144	204 Cases
+21146	85 Cases
+21152	15 Cases
+21154	11 Cases
+21157	212 Cases
+21158	110 Cases
+21161	14 Cases
+21162	16 Cases
+21163	24 Cases
+21201	95 Cases
+21202	218 Cases
+21204	164 Cases
+21205	188 Cases
+21206	451 Cases
+21207	593 Cases
+21208	393 Cases
+21209	139 Cases
+21210	22 Cases
+21211	73 Cases
+21212	140 Cases
+21213	275 Cases
+21214	126 Cases
+21215	706 Cases
+21216	221 Cases
+21217	271 Cases
+21218	343 Cases
+21219	39 Cases
+21220	343 Cases
+21221	320 Cases
+21222	513 Cases
+21223	264 Cases
+21224	1033 Cases
+21225	315 Cases
+21226	36 Cases
+21227	329 Cases
+21228	624 Cases
+21229	530 Cases
+21230	236 Cases
+21231	157 Cases
+21234	489 Cases
+21236	190 Cases
+21237	333 Cases
+21239	276 Cases
+21244	413 Cases
+21286	102 Cases
+21401	422 Cases
+21403	505 Cases
+21409	68 Cases
+21502	146 Cases
+21532	25 Cases
+21601	79 Cases
+21607	11 Cases
+21613	106 Cases
+21617	39 Cases
+21619	15 Cases
+21620	117 Cases
+21629	27 Cases
+21631	8 Cases
+21632	55 Cases
+21635	11 Cases
+21636	10 Cases
+21638	14 Cases
+21639	19 Cases
+21640	24 Cases
+21643	27 Cases
+21649	105 Cases
+21651	27 Cases
+21655	21 Cases
+21660	10 Cases
+21661	13 Cases
+21663	13 Cases
+21666	29 Cases
+21668	18 Cases
+21678	17 Cases
+21701	361 Cases
+21702	609 Cases
+21703	552 Cases
+21704	115 Cases
+21710	13 Cases
+21713	84 Cases
+21716	35 Cases
+21722	13 Cases
+21727	22 Cases
+21737	8 Cases
+21738	15 Cases
+21740	231 Cases
+21742	83 Cases
+21750	13 Cases
+21754	25 Cases
+21755	32 Cases
+21756	12 Cases
+21757	37 Cases
+21758	17 Cases
+21769	21 Cases
+21770	28 Cases
+21771	219 Cases
+21773	11 Cases
+21774	54 Cases
+21776	26 Cases
+21777	9 Cases
+21778	8 Cases
+21782	13 Cases
+21783	19 Cases
+21784	215 Cases
+21787	32 Cases
+21788	38 Cases
+21791	13 Cases
+21793	68 Cases
+21794	22 Cases
+21795	24 Cases
+21797	27 Cases
+21798	8 Cases
+21801	305 Cases
+21804	491 Cases
+21811	125 Cases
+21813	11 Cases
+21817	10 Cases
+21822	12 Cases
+21826	44 Cases
+21830	12 Cases
+21842	20 Cases
+21849	12 Cases
+21850	12 Cases
+21851	60 Cases
+21853	40 Cases
+21863	30 Cases
+21874	9 Cases
+21875	27 Cases
+21901	38 Cases
+21903	12 Cases
+21904	12 Cases
+21911	132 Cases
+21912	20 Cases
+21918	11 Cases
+21921	124 Cases
