@@ -1,6 +1,7 @@
 # Maryland zip-code level COVID19 cases #
 
-[![Build Status](https://travis-ci.org/wckdouglas/covid19_MD.svg?branch=master)](https://travis-ci.org/wckdouglas/covid19_MD)
+[![Build Status](https://travis-ci.org/wckdouglas/covid19_MD.svg?branch=master)](https://travis-ci.org/wckdouglas/covid19_MD)[![codecov](https://codecov.io/gh/wckdouglas/covid19_MD/branch/master/graph/badge.svg)](https://codecov.io/gh/wckdouglas/covid19_MD)
+
 
 Maryland government is releasing daily zip-code level data since 4/12. I copy and save the data everyday in this [github repo](https://github.com/wckdouglas/covid19_MD/tree/master/data), feel free to use these data!
 
