@@ -20,7 +20,7 @@ def test_update_using_db():
     update(args)
 
 
-def test_update_using_db():
+def test_update_using_data():
     args = run_args(use_db = False, refresh=True)
     update(args)
 
