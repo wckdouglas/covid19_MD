@@ -138,7 +138,7 @@ class Data():
         get population data for each zip code
         '''
         http = requests.get(self.population_url)
-        soup = BeautifulSoup(http.content)
+        soup = BeautifulSoup(http.content, features="lxml")
         table = soup.find_all('table')
         table = pd.read_html(str(table))[0] \
             .filter(['Zip Code','Population'])\
