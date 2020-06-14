@@ -121,7 +121,10 @@ class Data():
         logger.info('Latest file: %s' %data_files[-1])
         for i, csv in enumerate(data_files):
             date = os.path.basename(csv.replace('.tsv',''))
-            covid_data[date] = pd.read_csv(csv, names = ['Zip','Cases'],sep='\t') \
+            covid_data[date] = pd.read_csv(csv, 
+                            names = ['Zip','Cases'],sep='\t', 
+                            dtype = {'Zip':'Int64', 
+                                    'Cases':'str'}) \
                 .assign(Cases = lambda d: d.Cases.str.replace(' Cases','').astype(int))
         self.zip_covid = pd.concat(date_data.assign(Date = date) for date, date_data in covid_data.items()) \
             .assign(Date = lambda d: pd.to_datetime(d.Date, format = '%Y-%m-%d'))
