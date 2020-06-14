@@ -116,7 +116,10 @@ class Data():
         '''
         logger.info('Using data from ./data/')
         covid_data = {}
-        for i, csv in enumerate(glob.glob(self.data_path + '/*.tsv')):
+        data_files = glob.glob(self.data_path + '/*.tsv')
+        data_files.sort()
+        logger.info('Latest file: %s' %data_files[-1])
+        for i, csv in enumerate(data_files):
             date = os.path.basename(csv.replace('.tsv',''))
             covid_data[date] = pd.read_csv(csv, names = ['Zip','Cases'],sep='\t') \
                 .assign(Cases = lambda d: d.Cases.str.replace(' Cases','').astype(int))
