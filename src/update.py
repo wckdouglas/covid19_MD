@@ -107,4 +107,8 @@ def check_update():
     logger.info('Checking database')
     dat = Data()
     dat.read_zip_COVID()
-    print(dat.zip_covid.tail())
+    dat.zip_covid\
+        .pipe(lambda d: d[d.Date == d.Date.max()])\
+        .query('Cases > 0')\
+        .assign(Cases = lambda d: d.Cases.astype(int).astype(str) + ' Cases')\
+        .to_csv(sys.stdout, index=False, sep='\t', header=False)   
