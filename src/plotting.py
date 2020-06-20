@@ -174,7 +174,7 @@ def plot_time_series(ts_cases_data, ts_new_case_data, grouping='Zip'):
         default = 'Rockville'
 
     logger.info('Plotting time series for: %s level ' %(title))
-    options = ts_cases_data[grouping].unique().tolist()
+    options = ts_cases_data.sort_values(grouping).loc[:,grouping].unique().tolist()
 
     tsp_cases = TSplot(ts_cases_data, 
             y = 'Cases', 
