@@ -129,7 +129,7 @@ class TSplot():
         self.p.xaxis.major_label_text_font_size = "25pt"
         self.p.yaxis.axis_label_text_font_size = "25pt"
         self.p.yaxis.major_label_text_font_size = "25pt"
-        p.xaxis.major_label_orientation = math.pi/3
+        self.p.xaxis.major_label_orientation = math.pi/3
         logger.info('Initialized ts plot')
     
     def plot(self, grouping):
