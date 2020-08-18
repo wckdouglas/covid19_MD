@@ -81,7 +81,7 @@ def update_data(args, ts_data_file, map_data_file):
                 use_db = args.use_db) 
 
 
-def update(args):
+def update(args, get_app=False):
     logger.info('Updating dashboard')
     ts_data_file = 'data/ts.csv'
     map_data_file = 'data/MD.geojson'
@@ -95,12 +95,15 @@ def update(args):
     dashboard = Tabs(tabs=[Zip_panel, City_panel])
 
     #p = column(ts_plot, city_ts_plot, map_plot)
-    html_file = 'dashboard.html'
-    COVID_HTML = '../wckdouglas.github.io/_includes/COVID.html'
-    output_file(html_file)
-    save(dashboard)
-    if os.path.isfile(COVID_HTML):
-        markdown_html(html_file,COVID_HTML)
+    if not get_app:
+        html_file = 'dashboard.html'
+        COVID_HTML = '../wckdouglas.github.io/_includes/COVID.html'
+        output_file(html_file)
+        save(dashboard)
+        if os.path.isfile(COVID_HTML):
+            markdown_html(html_file,COVID_HTML)
+    else:
+        return dashboard
 
 
 def check_update():
