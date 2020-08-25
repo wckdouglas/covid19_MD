@@ -191,11 +191,11 @@ def plot_time_series(ts_cases_data, ts_new_case_data, grouping='Zip'):
 
     tsp_new_cases = TSplot(ts_new_case_data, 
             y = 'increase', 
-            ylabel = 'New cases (+%i)' %(total_new_case),  
+            ylabel = 'New cases' ,  
             tooltips = [('Date','@formatted_date'),
                     ('New cases','@increase'),
                     ('City', '@City')],
-            title='Daily New Cases by %s' %title)
+            title='Daily New Cases by %s (+%i)' %(title, total_new_case))
     tsp_new_cases.plot(grouping)
 
     code = """
