@@ -169,6 +169,7 @@ class TSplot():
 def plot_time_series(ts_cases_data, ts_new_case_data, grouping='Zip'):
     # ts_cases_data should have at least three columns: Zip, Cases, Date
     # ts_new_case_data: Zip, increase, Date
+    total_new_case = ts_new_case_data.increase.sum()
     if grouping == 'Zip':
         title = 'Zip code' 
         default = '20850'
@@ -190,7 +191,7 @@ def plot_time_series(ts_cases_data, ts_new_case_data, grouping='Zip'):
 
     tsp_new_cases = TSplot(ts_new_case_data, 
             y = 'increase', 
-            ylabel = 'New cases',  
+            ylabel = 'New cases (+%i)' %(total_new_case),  
             tooltips = [('Date','@formatted_date'),
                     ('New cases','@increase'),
                     ('City', '@City')],
