@@ -21,6 +21,8 @@ def plot_map(map_df, with_zip=True, today=None):
     4. Total: This is Cases/1M population
     5. Daily: This is the new case number 
     '''
+
+    total_new_case = map_df.Daily.sum()
     tooltips = [('City','@City'),
                 ('Population','@Population'),
                 ('Cases', '@Cases'),
@@ -35,7 +37,7 @@ def plot_map(map_df, with_zip=True, today=None):
         logger.info('Plotting %i cities' %map_df.shape[0])
         geosource = GeoJSONDataSource(geojson = map_df.to_json())
     col = 'Daily'
-    title = 'New COVID19 cases in MD (%s)' %today
+    title = 'New COVID19 cases in MD (%s; +%i)' %(today, total_new_case)
     color_mapper = LinearColorMapper(palette=Viridis256, 
                             low=map_df[col].min(), 
                             high=map_df[col].max())
@@ -169,7 +171,6 @@ class TSplot():
 def plot_time_series(ts_cases_data, ts_new_case_data, grouping='Zip'):
     # ts_cases_data should have at least three columns: Zip, Cases, Date
     # ts_new_case_data: Zip, increase, Date
-    total_new_case = ts_new_case_data.increase.sum()
     if grouping == 'Zip':
         title = 'Zip code' 
         default = '20850'
@@ -195,7 +196,7 @@ def plot_time_series(ts_cases_data, ts_new_case_data, grouping='Zip'):
             tooltips = [('Date','@formatted_date'),
                     ('New cases','@increase'),
                     ('City', '@City')],
-            title='Daily New Cases by %s (+%i)' %(title, total_new_case))
+            title='Daily New Cases by %s' %title)
     tsp_new_cases.plot(grouping)
 
     code = """
