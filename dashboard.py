@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from src.update import update, check_update
+from src.download import get
 import argparse
 
 def get_opt():
@@ -11,6 +12,11 @@ def get_opt():
     #chekc update
     check = subparsers.add_parser(name = 'check',
                                 description='check if MD gov database is updated?')
+
+    #get data fomr date
+    check = subparsers.add_parser(name = 'get',
+                                description='get data from a given date')
+    check.add_argument('--date', help = 'Getting data for this date (e.g. 2020-09-10)', required=True)
     # update dashboard 
     update = subparsers.add_parser(name = 'update', description='Update COVID19 dashboard',
                                     formatter_class=argparse.RawTextHelpFormatter)
@@ -31,6 +37,8 @@ if __name__ == '__main__':
         update(args)
     elif args.subcommand == 'check':
         check_update()
+    elif args.subcommand == 'get':
+        get(args.date)
 
 
 
