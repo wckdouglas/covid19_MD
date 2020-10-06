@@ -205,7 +205,7 @@ def get_data(ts_data_file = '../data/ts.csv', map_data_file = '../data/MD.geojso
                         .assign(increase = lambda d: d.increase.fillna(0))\
                         .pipe(lambda d: d[d.Date == d.Date.max()])) \
         .pipe(lambda d: d[~pd.isnull(d.geometry)]) \
-        .assign(per_population = lambda d: d.increase / d.Population.astype(int) * 1e6) \
+        .assign(per_population = lambda d: d.Cases / d.Population.astype(int) * 1e6) \
         .assign(Date = lambda d: d.Date.astype(str))
 
     ts_data = maryland.zip_covid\
