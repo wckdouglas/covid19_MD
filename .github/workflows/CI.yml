@@ -41,7 +41,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          conda install python=3.6 pandas geopandas beautifulsoup4 html5lib bokeh lxml numpy requests tqdm pytest-cov
+          conda install python=3.6 pandas geopandas=0.7.0 beautifulsoup4 html5lib bokeh lxml numpy requests tqdm pytest-cov
 
       - name: Test with pytest
         run: |
