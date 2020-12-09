@@ -45,9 +45,9 @@ jobs:
 
       - name: Test with pytest
         run: |
-          pytest --cov=./ 
+          coverage run -m pytest
 
       - name: codecov
         run: |
-          codecov
+          bash <(curl -s https://codecov.io/bash)
 
