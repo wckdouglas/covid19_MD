@@ -23,6 +23,7 @@ class Data():
         self.population_url = 'https://www.maryland-demographics.com/zip_codes_by_population'
         self.geo_shape_url = 'https://www2.census.gov/geo/tiger/TIGER2019/ZCTA5/tl_2019_us_zcta510.zip'
         self.MD_zip_data_url ='https://opendata.arcgis.com/datasets/5f459467ee7a4ffda968139011f06c46_0.geojson' 
+        self.MD_zip_data_url ='https://services.arcgis.com/njFNhDsUCentVYJW/arcgis/rest/services/MDCOVID19_MASTER_ZIP_CODE_CASES/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json' 
 
         #actual reading dat
         self.geo = None
