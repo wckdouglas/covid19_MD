@@ -4,17 +4,16 @@ RUN apt-get update && \
     apt-get -y install gcc mono-mcs libz-dev && \
     rm -rf /var/lib/apt/lists/*
 
-ENV PATH="/usr/bin:$PATH"
 ENV PATH="/opt/conda/bin:$PATH"
 RUN conda config --add channels conda-forge && \
     conda config --add channels defaults && \
     conda config --add channels anaconda && \
-    conda config --set always_yes yes --set changeps1 no 
-RUN conda install -c conda-forge mamba 
+    conda config --set always_yes yes --set changeps1 no  
 
 COPY . /opt/covid
-RUN mamba install python=3.6 pandas geopandas=0.7.0 \
-        beautifulsoup4 html5lib bokeh lxml numpy requests tqdm 
+RUN conda env create -f /opt/covid/environment.yml
+RUN conda init bash
+RUN conda activate covid
 
-ENTRYPOINT ["/opt/conda/bin/python", "/opt/covid/dashboard.py"]
+ENTRYPOINT ["conda", "run", "--no-capture-output", "-n", "covid","/opt/conda/bin/python", "/opt/covid/dashboard.py"]
 CMD ["--help"]
