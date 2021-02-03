@@ -14,9 +14,7 @@ dependencies:
   - bzip2=1.0.8=h0b31af3_2
   - ca-certificates=2020.11.8=h033912b_0
   - cairo=1.16.0=hec6a9b0_1003
-  - certifi=2020.11.8=py36h79c6626_0
   - cffi=1.14.0=py36h356ff06_0
-  - cfitsio=3.470=hddc9c06_5
   - chardet=3.0.4=py36h9f0ad1d_1006
   - click=7.1.2=pyh9f0ad1d_0
   - click-plugins=1.1.1=py_0
@@ -28,7 +26,6 @@ dependencies:
   - decorator=4.4.2=py_0
   - expat=2.2.9=h4a8c4bd_2
   - fiona=1.8.13=py36h11049c8_1
-  - fontconfig=2.13.1=h6b1039f_1001
   - freetype=2.10.2=h8da9a1a_0
   - freexl=1.0.5=h1de35cc_1002
   - gdal=3.0.4=py36h5a1ef21_10
@@ -49,8 +46,6 @@ dependencies:
   - ipython_genutils=0.2.0=py_1
   - jedi=0.17.0=py36h9f0ad1d_0
   - jinja2=2.11.2=pyh9f0ad1d_0
-  - jpeg=9d=h0b31af3_0
-  - json-c=0.13.1=h575e443_1002
   - kealib=1.4.13=h40102fb_1
   - krb5=1.17.1=h1752a42_0
   - libblas=3.8.0=16_openblas
@@ -59,7 +54,6 @@ dependencies:
   - libcxx=10.0.0=h1af66ff_2
   - libdap4=3.20.6=h8c15375_0
   - libedit=3.1.20170329=hcfe32e1_1001
-  - libffi=3.2.1=h4a8c4bd_1007
   - libgdal=3.0.4=h242383b_10
   - libgfortran=4.0.0=2
   - libiconv=1.15=h0b31af3_1006
@@ -78,7 +72,6 @@ dependencies:
   - libxslt=1.1.33=h320ff13_0
   - llvm-openmp=10.0.0=h28b9765_0
   - lxml=4.5.1=py36h2ab0afd_0
-  - lz4-c=1.9.2=h4a8c4bd_1
   - markupsafe=1.1.1=py36h37b9a7d_1
   - more-itertools=8.3.0=py_0
   - munch=2.5.0=py_0
@@ -90,7 +83,6 @@ dependencies:
   - packaging=20.4=pyh9f0ad1d_0
   - pandas=1.0.4=py36hcc1bba6_0
   - parso=0.8.0=py_1
-  - pcre=8.44=h4a8c4bd_0
   - pexpect=4.8.0=pyh9f0ad1d_2
   - pickleshare=0.7.5=py_1003
   - pillow=7.1.2=py36h2ae5dfa_0
@@ -138,13 +130,21 @@ dependencies:
   - webencodings=0.5.1=py_1
   - wheel=0.34.2=py_1
   - xerces-c=3.2.2=h8f8adb3_1004
-  - xz=5.2.5=h0b31af3_0
-  - yaml=0.2.4=h0b31af3_0
   - zipp=3.1.0=py_0
   - zlib=1.2.11=h0b31af3_1006
   - zstd=1.4.4=h4b3e974_3
   - pip:
     - commando==1.0.0
     - fswrap==1.0.0
+    - jpeg=9d=h0b31af3_0
+    - libffi=3.2.1=h4a8c4bd_1007
+    - lz4-c=1.9.2=h4a8c4bd_1
+    - xz=5.2.5=h0b31af3_0
+    - cfitsio=3.470=hddc9c06_5
+    - yaml=0.2.4=h0b31af3_0
+    - certifi=2020.11.8=py36h79c6626_0
+    - json-c=0.13.1=h575e443_1002
+    - fontconfig=2.13.1=h6b1039f_1001
+    - pcre=8.44=h4a8c4bd_0
 prefix: /Users/wckdouglas/miniconda3/envs/covid
 
