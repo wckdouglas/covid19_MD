@@ -96,7 +96,7 @@ def update(args, get_app=False):
 
     #p = column(ts_plot, city_ts_plot, map_plot)
     if not get_app:
-        html_file = 'dashboard.html'
+        html_file = args.out_html
         COVID_HTML = '../wckdouglas.github.io/_includes/COVID.html'
         output_file(html_file)
         save(dashboard)

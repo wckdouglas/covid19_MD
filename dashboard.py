@@ -26,6 +26,8 @@ def get_opt():
     update.add_argument('--refresh', action = 'store_true', 
                         help='Fetch data and create data table?\n'\
                             '(default: False; only create if the data table is not created today)')
+    update.add_argument('--out_html', default = 'dashboard.html', 
+                        help='Output html file path')
 
     args = parser.parse_args() 
     return args
