@@ -11,9 +11,9 @@ RUN conda config --add channels conda-forge && \
     conda config --set always_yes yes --set changeps1 no  
 
 COPY . /opt/covid
-RUN conda env create -f /opt/covid/environment.yml
-RUN conda init bash
-RUN conda activate covid
+RUN conda install python=3.6 pandas geopandas=0.7.0 \
+        beautifulsoup4 html5lib bokeh lxml \
+        numpy requests tqdm pytest-cov libiconv
 
-ENTRYPOINT ["conda", "run", "--no-capture-output", "-n", "covid","/opt/conda/bin/python", "/opt/covid/dashboard.py"]
+ENTRYPOINT ["/opt/conda/bin/python", "/opt/covid/dashboard.py"]
 CMD ["--help"]
