@@ -1,7 +1,8 @@
 FROM ubuntu:18.04
 
 RUN apt-get update  && \
-    apt-get -y install wget
+    apt-get -y install wget && \
+    rm -rf /var/lib/apt/lists/*
 
 # install conda
 RUN wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh && \
@@ -15,7 +16,8 @@ RUN hash -r && \
     conda update -q conda && \
     conda install pandas geopandas beautifulsoup4 html5lib \
         bokeh lxml numpy requests \
-        tqdm pytest-cov
+        tqdm pytest-cov && \
+    conda clean -afy
 
 COPY . /opt/covid
 ENTRYPOINT ["/opt/miniconda/bin/python", "/opt/covid/dashboard.py"]
