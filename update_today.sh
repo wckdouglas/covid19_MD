@@ -14,7 +14,7 @@ git commit -am "added ${TODAY}"
 git push
 
 # generate dashboard
-docker run -v "$(pwd):/data" md_covid19 update -o /data/dashboard.html
+docker run -v "$(pwd):/data" md_covid19 update -o /data/dashboard.html --datadir /data/data
 cd $WEB_REPO
 git pull
 cat $COVID_REPO/dashboard.html | sed 's/<!DOCTYPE html>//g' > $WEB_REPO/_includes/COVID.html

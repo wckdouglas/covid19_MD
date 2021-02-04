@@ -16,10 +16,10 @@ class COVIDerror(Exception):
     pass
 
 class Data():
-    def __init__(self, state = 'MD', CWD=cwd):
+    def __init__(self, state = 'MD', datadir = './data'):
         #data and URL path
         self.state = state
-        self.data_path = CWD + '/data'
+        self.data_path = datadir
         self.zip_map_url = 'https://public.opendatasoft.com/explore/dataset/us-zip-code-latitude-and-longitude'\
                 '/download/?format=csv&timezone=America/New_York'\
                 '&lang=en&use_labels_for_header=true&csv_separator=%3B'
@@ -118,10 +118,10 @@ class Data():
         '''
         cases count per zip code per day
         '''
-        logger.info('Using data from ./data/')
+        logger.info('Using data from %s' %self.data_path)
         covid_data = {}
         data_files = glob.glob(self.data_path + '/*.tsv')
-        if len(data_files):
+        if len(data_files) == 0:
             raise COVIDerror('No data from %s' %self.data_path)
         data_files.sort()
         logger.info('Latest file: %s' %data_files[-1])
@@ -187,7 +187,7 @@ def markdown_html(html_file, out_file):
 
 
 def get_data(ts_data_file = '../data/ts.csv', map_data_file = '../data/MD.geojson', datadir = './data'):
-    maryland = Data(state='MD', CWD = datadir)
+    maryland = Data(state='MD', datadir = datadir)
     use_db = not datadir  # if empty string
     maryland.get(use_db = use_db)
     data = maryland.geo\
