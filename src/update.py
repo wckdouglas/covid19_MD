@@ -78,13 +78,13 @@ def update_data(args, ts_data_file, map_data_file):
         #daily update!!
         get_data(ts_data_file = ts_data_file,
                 map_data_file = map_data_file,
-                use_db = args.use_db) 
+                datadir = args.datadir) 
 
 
 def update(args, get_app=False):
     logger.info('Updating dashboard')
-    ts_data_file = 'data/ts.csv'
-    map_data_file = 'data/MD.geojson'
+    ts_data_file = args.datadir + '/ts.csv'
+    map_data_file = args.datadir + '/MD.geojson'
     update_data(args, ts_data_file, map_data_file)
     zip_ts_plot, city_ts_plot = ts_plots(ts_data_file)
     zip_map_plot, city_map_plot = map_plots(map_data_file)

@@ -20,9 +20,8 @@ def get_opt():
     # update dashboard 
     update = subparsers.add_parser(name = 'update', description='Update COVID19 dashboard',
                                     formatter_class=argparse.RawTextHelpFormatter)
-    update.add_argument('--use-db', dest = 'use_db', action = 'store_true', 
-                        help='Use databse from MD government?\n'\
-                            '(default: False; use collected data in ./data/*tsv)')
+    update.add_argument('--datadir', dest = 'datadir', default = './data', 
+                        help='Data directory for tsv files, if not supplied, MD goverment data will be used')
     update.add_argument('--refresh', action = 'store_true', 
                         help='Fetch data and create data table?\n'\
                             '(default: False; only create if the data table is not created today)')

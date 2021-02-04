@@ -12,11 +12,14 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger('Data collector')
 cwd = os.path.dirname(os.path.abspath(__file__))
 
+class COVIDerror(Exception):
+    pass
+
 class Data():
-    def __init__(self, state = 'MD'):
+    def __init__(self, state = 'MD', CWD=cwd):
         #data and URL path
         self.state = state
-        self.data_path = os.path.dirname(cwd) + '/data'
+        self.data_path = CWD + '/data'
         self.zip_map_url = 'https://public.opendatasoft.com/explore/dataset/us-zip-code-latitude-and-longitude'\
                 '/download/?format=csv&timezone=America/New_York'\
                 '&lang=en&use_labels_for_header=true&csv_separator=%3B'
@@ -36,9 +39,9 @@ class Data():
         fill in data
         '''
         if use_db:
-            self.read_zip_COVID()
+            self.read_zip_COVID_web()
         else:
-            self.read_zip_COVID_old()
+            self.read_zip_COVID()
         self.read_map()
         self.read_zip_map()
         self.zip_codes = self.zip_map.Zip
@@ -88,7 +91,7 @@ class Data():
             .assign(Zip = lambda d: d.Zip.astype(int))
         logger.info('Loaded geo shape')
 
-    def read_zip_COVID(self):
+    def read_zip_COVID_web(self):
         '''
         cases count per zip code per day
         '''
@@ -111,13 +114,15 @@ class Data():
         logger.info('Loaded %s to %s' %(min_date, max_date))
 
 
-    def read_zip_COVID_old(self):
+    def read_zip_COVID(self):
         '''
         cases count per zip code per day
         '''
         logger.info('Using data from ./data/')
         covid_data = {}
         data_files = glob.glob(self.data_path + '/*.tsv')
+        if len(data_files):
+            raise COVIDerror('No data from %s' %self.data_path)
         data_files.sort()
         logger.info('Latest file: %s' %data_files[-1])
         for i, csv in enumerate(data_files):
@@ -181,8 +186,9 @@ def markdown_html(html_file, out_file):
     logger.info('Written %i lines from %i lines to %s' %(outline, inline, out_file))
 
 
-def get_data(ts_data_file = '../data/ts.csv', map_data_file = '../data/MD.geojson', use_db=False):
-    maryland = Data(state='MD')
+def get_data(ts_data_file = '../data/ts.csv', map_data_file = '../data/MD.geojson', datadir = './data'):
+    maryland = Data(state='MD', CWD = datadir)
+    use_db = not datadir  # if empty string
     maryland.get(use_db = use_db)
     data = maryland.geo\
         .merge(maryland.zip_map, on ='Zip', how = 'right')\
