@@ -18,5 +18,5 @@ RUN hash -r && \
         tqdm pytest-cov
 
 COPY . /opt/covid
-ENTRYPOINT ["/opt/conda/bin/python", "/opt/covid/dashboard.py"]
+ENTRYPOINT ["/opt/miniconda/bin/python", "/opt/covid/dashboard.py"]
 CMD ["--help"]
