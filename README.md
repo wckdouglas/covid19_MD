@@ -30,7 +30,11 @@ both of the commands will generate a html file: ```dashboard.html```
 
 ## Docker ##
 
+The code can be run as docker image:
+
 ```
+git clone git@github.com:wckdouglas/covid19_MD.git
+cd covid19_MD
 docker pull wckdouglas/md_covid19
 docker run -v "$(pwd):/data" md_covid19 update -o /data/dashboard.html
 ```
