@@ -1,6 +1,6 @@
 # Maryland zip-code level COVID19 cases #
 
-[![CI](https://github.com/wckdouglas/covid19_MD/workflows/CI/badge.svg)](https://github.com/wckdouglas/covid19_MD/actions)[![codecov](https://codecov.io/gh/wckdouglas/covid19_MD/branch/master/graph/badge.svg)](https://codecov.io/gh/wckdouglas/covid19_MD)
+[![CI](https://github.com/wckdouglas/covid19_MD/workflows/CI/badge.svg)](https://github.com/wckdouglas/covid19_MD/actions)[![codecov](https://codecov.io/gh/wckdouglas/covid19_MD/branch/master/graph/badge.svg)](https://codecov.io/gh/wckdouglas/covid19_MD)[![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/wckdouglas/md_covid19)](https://hub.docker.com/r/wckdouglas/md_covid19)
 
 
 Maryland government is releasing daily zip-code level data since 4/12. I copy and save the data everyday in this [github repo](https://github.com/wckdouglas/covid19_MD/tree/master/data), feel free to use these data!
@@ -27,3 +27,13 @@ python dashboard.py update #using data collected from MD gov website
 ```
 
 both of the commands will generate a html file: ```dashboard.html```
+
+## Docker ##
+
+```
+docker pull wckdouglas/md_covid19
+docker run -v "$(pwd):/data" md_covid19 update -o /data/dashboard.html
+```
+
+
+
