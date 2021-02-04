@@ -9,9 +9,9 @@ import pytest
 
 class run_args():
     def __init__(self, use_db = False, refresh = False):
-        self.use_db = use_db
         self.refresh = refresh
         self.out_html = './out.html'
+        self.datadir = os.path.dirname(os.path.abspath(__file__)) + '../data'
 
 @pytest.fixture
 def input():
@@ -21,12 +21,6 @@ def test_check():
     check_update()
 
 
-def test_update_using_db(input):
-    args = run_args(use_db = True, refresh=True)
-    update(input)
-
-
 def test_update_using_data(input):
-    args = run_args(use_db = False, refresh=True)
     update(input)
 
