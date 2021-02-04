@@ -13,7 +13,7 @@ RUN conda config --add channels conda-forge && \
     mamba install python=3.6 pandas \
         beautifulsoup4 html5lib bokeh lxml \
         numpy requests tqdm pytest-cov libiconv && \
-    pip install geopandas=0.7.0
+    pip install geopandas==0.7.0
 
 COPY . /opt/covid
 
