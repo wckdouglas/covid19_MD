@@ -41,3 +41,11 @@ docker run -v "$(pwd):/data" md_covid19 update -o /data/dashboard.html
 
 
 
+## Poetry ##
+
+```
+pip install poetry
+git clone git@github.com:wckdouglas/covid19_MD.git
+cd covid_MD
+poetry install
+poetry run python dashboard.py update -o /data/dashboard.html

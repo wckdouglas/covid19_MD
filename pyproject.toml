@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "covid19_md"
+version = "0.1.0"
+description = ""
+authors = ["Douglas Wu <wckdouglas@gmail.com>"]
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = "3.6.1"
+pandas = "^1.0.1"
+geopandas = "0.7.0"
+beautifulsoup4 = "^4.9.1"
+bokeh = "^2.0.1"
+lxml = "^4.6.2"
+numpy = "^1.18.4"
+requests = "^2.25.1"
+tqdm = "^4.57.0"
+pytest-cov = "^2.11.1"
+pytest = "^6.2.2"
+html5lib = "^1.0.1"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
