@@ -14,7 +14,7 @@ git commit -am "added ${TODAY}"
 git push
 
 # generate dashboard
-poetry run python dashboard.py update -o /data/dashboard.html --datadir /data
+poetry run python dashboard.py update -o /data/dashboard.html --datadir data
 cd $WEB_REPO
 git pull
 cat $COVID_REPO/dashboard.html | sed 's/<!DOCTYPE html>//g' > $WEB_REPO/_includes/COVID.html
