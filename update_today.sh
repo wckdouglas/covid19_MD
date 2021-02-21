@@ -7,14 +7,14 @@ echo Running $TODAY
 #Fetch data
 cd $COVID_REPO
 git pull
-poetry run dashboard.py get --date $TODAY > data/${TODAY}.tsv
+poetry run python dashboard.py get --date $TODAY > data/${TODAY}.tsv
 echo Fetched $TODAY
 git add data/${TODAY}.tsv
 git commit -am "added ${TODAY}"
 git push
 
 # generate dashboard
-poetry run dashboard.py update -o /data/dashboard.html --datadir /data/data
+poetry run python dashboard.py update -o /data/dashboard.html --datadir /data/data
 cd $WEB_REPO
 git pull
 cat $COVID_REPO/dashboard.html | sed 's/<!DOCTYPE html>//g' > $WEB_REPO/_includes/COVID.html
