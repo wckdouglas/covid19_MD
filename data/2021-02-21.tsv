@@ -1,0 +1,15 @@
+
+  FileNotFoundError
+
+  [Errno 2] No such file or directory
+
+  at ~/miniconda3/lib/python3.6/os.py:594 in _execvpe
+       590│         path_list = map(fsencode, path_list)
+       591│     for dir in path_list:
+       592│         fullname = path.join(dir, file)
+       593│         try:
+    →  594│             exec_func(fullname, *argrest)
+       595│         except OSError as e:
+       596│             last_exc = e
+       597│             tb = sys.exc_info()[2]
+       598│             if (e.errno != errno.ENOENT and e.errno != errno.ENOTDIR
