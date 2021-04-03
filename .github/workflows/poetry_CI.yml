@@ -23,12 +23,12 @@ jobs:
       - name: Set up Python 3.6
         uses: actions/setup-python@v2
         with:
-          python-version: 3.6
+          python-version: 3.6.1
 
       - name: Install poetry
-        uses: abatilo/actions-poetry@v2.1.0
+        uses: Gr1N/setup-poetry@v4
         with:
-          poetry-version: 1.1.2
+          poetry-version: 1.1.5
 
 
       - name: Install dependencies
