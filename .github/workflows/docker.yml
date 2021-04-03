@@ -2,6 +2,9 @@ name: Push and publish to Docker Hub
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ master ]
+
   
 jobs:
 
@@ -29,7 +32,7 @@ jobs:
         context: ./
         file: ./Dockerfile
         push: true
-        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/simplewhale:latest
+        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/covid19_MD:latest
 
     - name: Image digest
       run: echo ${{ steps.docker_build.outputs.digest }}
@@ -55,7 +58,7 @@ jobs:
         file: ./Dockerfile
         builder: ${{ steps.buildx.outputs.name }}
         push: true
-        tags:  ${{ secrets.DOCKER_HUB_USERNAME }}/simplewhale:latest
+        tags:  ${{ secrets.DOCKER_HUB_USERNAME }}/covid19_MD:latest
         cache-from: type=local,src=/tmp/.buildx-cache
         cache-to: type=local,dest=/tmp/.buildx-cache
     - name: Image digest
