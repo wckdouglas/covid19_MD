@@ -1,6 +1,6 @@
 # Maryland zip-code level COVID19 cases #
 
-[![CI](https://github.com/wckdouglas/covid19_MD/workflows/CI/badge.svg)](https://github.com/wckdouglas/covid19_MD/actions)[![codecov](https://codecov.io/gh/wckdouglas/covid19_MD/branch/master/graph/badge.svg)](https://codecov.io/gh/wckdouglas/covid19_MD)[![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/wckdouglas/md_covid19)](https://hub.docker.com/r/wckdouglas/md_covid19)
+[![poetry CI](https://github.com/wckdouglas/covid19_MD/actions/workflows/poetry_CI.yml/badge.svg)](https://github.com/wckdouglas/covid19_MD/actions/workflows/poetry_CI.yml)[![miniconda CI](https://github.com/wckdouglas/covid19_MD/actions/workflows/miniconda_CI.yml/badge.svg)](https://github.com/wckdouglas/covid19_MD/actions/workflows/miniconda_CI.yml)[![codecov](https://codecov.io/gh/wckdouglas/covid19_MD/branch/master/graph/badge.svg)](https://codecov.io/gh/wckdouglas/covid19_MD)[![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/wckdouglas/md_covid19)](https://hub.docker.com/r/wckdouglas/md_covid19)
 
 
 Maryland government is releasing daily zip-code level data since 4/12. I copy and save the data everyday in this [github repo](https://github.com/wckdouglas/covid19_MD/tree/master/data), feel free to use these data!
