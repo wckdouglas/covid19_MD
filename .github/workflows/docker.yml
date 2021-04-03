@@ -2,10 +2,8 @@ name: Push and publish to Docker Hub
 on:
   push:
     branches: [ master ]
-  pull_request:
-    branches: [ master ]
 
-  
+
 jobs:
 
   build:
