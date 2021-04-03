@@ -1,0 +1,45 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: poetry CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: Poetry build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python 3.6
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.6
+
+      - name: Install poetry
+        uses: abatilo/actions-poetry@v2.1.0
+        with:
+          poetry-version: 1.1.2
+
+
+      - name: Install dependencies
+        run: |
+          poetry install
+
+      - name: Test with pytest
+        run: |
+          poetry run coverage run -m pytest -l  -rPap -vvv -p no:warnings
+
+      - name: codecov
+        run: |
+          bash <(curl -s https://codecov.io/bash)
+
