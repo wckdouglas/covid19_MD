@@ -31,9 +31,7 @@ class Data:
         self.population_url = (
             "https://www.maryland-demographics.com/zip_codes_by_population"
         )
-        self.geo_shape_url = (
-            "https://www2.census.gov/geo/tiger/TIGER2019/ZCTA5/tl_2019_us_zcta510.zip"
-        )
+        self.geo_shape_url = "https://www2.census.gov/geo/tiger/TIGER2019/ZCTA5/tl_2019_us_zcta510.zip"
         self.MD_zip_data_url = "https://opendata.arcgis.com/datasets/5f459467ee7a4ffda968139011f06c46_0.geojson"
         self.MD_zip_data_url = "https://services.arcgis.com/njFNhDsUCentVYJW/arcgis/rest/services/MDCOVID19_MASTER_ZIP_CODE_CASES/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json"
 
@@ -108,7 +106,12 @@ class Data:
             .pipe(lambda d: d[~pd.isnull(d.ZIP_CODE)])
             .drop(["OBJECTID", "geometry"], axis=1)
             .pipe(pd.DataFrame)
-            .pipe(pd.melt, id_vars=["ZIP_CODE"], var_name="Date", value_name="Cases")
+            .pipe(
+                pd.melt,
+                id_vars=["ZIP_CODE"],
+                var_name="Date",
+                value_name="Cases",
+            )
             .assign(Cases=lambda d: d.Cases.fillna(0))
             .assign(
                 Date=lambda d: d.Date.str.extract(
@@ -116,7 +119,11 @@ class Data:
                 )
             )
             .assign(Date=lambda d: pd.to_datetime(d.Date, format="%m_%d_%Y"))
-            .assign(ZIP_CODE=lambda d: d.ZIP_CODE.where(d.ZIP_CODE != "21802", "21804"))
+            .assign(
+                ZIP_CODE=lambda d: d.ZIP_CODE.where(
+                    d.ZIP_CODE != "21802", "21804"
+                )
+            )
             .groupby(["ZIP_CODE", "Date"], as_index=False)
             .agg({"Cases": "sum"})
             .assign(ZIP_CODE=lambda d: d.ZIP_CODE.astype(int))
@@ -144,9 +151,12 @@ class Data:
                 names=["Zip", "Cases"],
                 sep="\t",
                 dtype={"Zip": "Int64", "Cases": "str"},
-            ).assign(Cases=lambda d: d.Cases.str.replace(" Cases", "").astype(int))
+            ).assign(
+                Cases=lambda d: d.Cases.str.replace(" Cases", "").astype(int)
+            )
         self.zip_covid = pd.concat(
-            date_data.assign(Date=date) for date, date_data in covid_data.items()
+            date_data.assign(Date=date)
+            for date, date_data in covid_data.items()
         ).assign(Date=lambda d: pd.to_datetime(d.Date, format="%Y-%m-%d"))
         logger.info("Loaded daily COVID cases (%i days)" % (i + 1))
 
@@ -197,11 +207,15 @@ def markdown_html(html_file, out_file):
             if not "<!DOCTYPE html>" in line.strip():
                 outline += 1
                 print(line.strip(), file=out_html)
-    logger.info("Written %i lines from %i lines to %s" % (outline, inline, out_file))
+    logger.info(
+        "Written %i lines from %i lines to %s" % (outline, inline, out_file)
+    )
 
 
 def get_data(
-    ts_data_file="../data/ts.csv", map_data_file="../data/MD.geojson", datadir="./data"
+    ts_data_file="../data/ts.csv",
+    map_data_file="../data/MD.geojson",
+    datadir="./data",
 ):
     maryland = Data(state="MD", datadir=datadir)
     use_db = not datadir  # if empty string
@@ -210,17 +224,22 @@ def get_data(
         maryland.geo.merge(maryland.zip_map, on="Zip", how="right")
         .merge(maryland.zip_covid, on="Zip", how="left")
         .merge(
-            maryland.zip_population.assign(Zip=lambda d: d.Zip.astype(int)), on="Zip"
+            maryland.zip_population.assign(Zip=lambda d: d.Zip.astype(int)),
+            on="Zip",
         )
         .assign(Date=lambda d: d.Date.fillna(d.Date.max()))
-        .filter(["Zip", "City", "State", "Cases", "Date", "geometry", "Population"])
+        .filter(
+            ["Zip", "City", "State", "Cases", "Date", "geometry", "Population"]
+        )
     )
 
     total_case_data = (
         data.pipe(lambda d: d[d.Date == d.Date.max()])
         .assign(Cases=lambda d: d.Cases.fillna(0))
         .pipe(lambda d: d[~pd.isnull(d.geometry)])
-        .assign(per_population=lambda d: d.Cases * 1e6 / d.Population.astype(int))
+        .assign(
+            per_population=lambda d: d.Cases * 1e6 / d.Population.astype(int)
+        )
     )
     today = str(total_case_data.Date.astype(str).unique()[0])
 
@@ -230,18 +249,24 @@ def get_data(
             lambda d: d.nlargest(2, "Date")
             .assign(increase=lambda d: d.Cases.max() - d.Cases.min())
             .assign(
-                increase=lambda d: np.where(pd.isnull(d.increase), d.Cases, d.increase)
+                increase=lambda d: np.where(
+                    pd.isnull(d.increase), d.Cases, d.increase
+                )
             )
             .assign(increase=lambda d: d.increase.fillna(0))
             .pipe(lambda d: d[d.Date == d.Date.max()])
         )
         .pipe(lambda d: d[~pd.isnull(d.geometry)])
-        .assign(per_population=lambda d: d.Cases / d.Population.astype(int) * 1e6)
+        .assign(
+            per_population=lambda d: d.Cases / d.Population.astype(int) * 1e6
+        )
         .assign(Date=lambda d: d.Date.astype(str))
     )
 
     ts_data = (
-        maryland.zip_covid.merge(maryland.zip_map.filter(["Zip", "City"]), on="Zip")
+        maryland.zip_covid.merge(
+            maryland.zip_map.filter(["Zip", "City"]), on="Zip"
+        )
         .groupby(["Zip", "City"], as_index=False)
         .apply(
             lambda d: d.sort_values("Date").assign(

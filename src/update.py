@@ -37,13 +37,15 @@ def ts_plots(ts_data_file):
         .assign(Zip=lambda d: d.Zip.astype(str))
     )
     new_zip_df = ts_data.assign(
-        increase=lambda d: d.groupby("Zip").Cases.transform(lambda x: x - np.roll(x, 1))
+        increase=lambda d: d.groupby("Zip").Cases.transform(
+            lambda x: x - np.roll(x, 1)
+        )
     ).query("increase>=0")
     zip_ts_plot = plot_time_series(ts_data, new_zip_df, grouping="Zip")
 
-    city_df = ts_data.groupby(["City", "Date", "formatted_date"], as_index=False).agg(
-        {"Cases": "sum"}
-    )
+    city_df = ts_data.groupby(
+        ["City", "Date", "formatted_date"], as_index=False
+    ).agg({"Cases": "sum"})
     new_city_df = new_zip_df.groupby(
         ["City", "Date", "formatted_date"], as_index=False
     ).agg({"Cases": "sum", "increase": "sum"})
@@ -77,11 +79,17 @@ def update_data(args, ts_data_file, map_data_file):
     """
     write new data to file
     """
-    if not is_updated(ts_data_file) or not is_updated(map_data_file) or args.refresh:
+    if (
+        not is_updated(ts_data_file)
+        or not is_updated(map_data_file)
+        or args.refresh
+    ):
         logger.info("Updating data: %s" % str(today))
         # daily update!!
         get_data(
-            ts_data_file=ts_data_file, map_data_file=map_data_file, datadir=args.datadir
+            ts_data_file=ts_data_file,
+            map_data_file=map_data_file,
+            datadir=args.datadir,
         )
 
 
@@ -120,6 +128,8 @@ def check_update():
     logger.info("Checking database")
     dat = Data()
     dat.read_zip_COVID()
-    dat.zip_covid.pipe(lambda d: d[d.Date == d.Date.max()]).query("Cases > 0").assign(
-        Cases=lambda d: d.Cases.astype(int).astype(str) + " Cases"
-    ).to_csv(sys.stdout, index=False, sep="\t", header=False)
+    dat.zip_covid.pipe(lambda d: d[d.Date == d.Date.max()]).query(
+        "Cases > 0"
+    ).assign(Cases=lambda d: d.Cases.astype(int).astype(str) + " Cases").to_csv(
+        sys.stdout, index=False, sep="\t", header=False
+    )

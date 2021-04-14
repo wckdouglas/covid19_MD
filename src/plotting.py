@@ -7,11 +7,8 @@ from bokeh.models import (
     HoverTool,
     Select,
     LinearColorMapper,
-    Slider,
-    BasicTicker,
 )
-from bokeh.layouts import column, row, widgetbox
-from bokeh.palettes import brewer
+from bokeh.layouts import column
 from bokeh.palettes import Viridis256
 from bokeh.plotting import figure
 import logging
@@ -44,7 +41,9 @@ def plot_map(map_df, with_zip=True, today=None):
     if with_zip:
         logger.info("Plotting %i zip codes" % map_df.shape[0])
         tooltips.append(("Zip code", "@Zip"))
-        geosource = GeoJSONDataSource(geojson=map_df.drop("Date", axis=1).to_json())
+        geosource = GeoJSONDataSource(
+            geojson=map_df.drop("Date", axis=1).to_json()
+        )
     else:
         logger.info("Plotting %i cities" % map_df.shape[0])
         geosource = GeoJSONDataSource(geojson=map_df.to_json())
@@ -206,13 +205,19 @@ def plot_time_series(ts_cases_data, ts_new_case_data, grouping="Zip"):
         default = "Rockville"
 
     logger.info("Plotting time series for: %s level " % (title))
-    options = ts_cases_data.sort_values(grouping).loc[:, grouping].unique().tolist()
+    options = (
+        ts_cases_data.sort_values(grouping).loc[:, grouping].unique().tolist()
+    )
 
     tsp_cases = TSplot(
         ts_cases_data,
         y="Cases",
         ylabel="Total cases",
-        tooltips=[("Date", "@formatted_date"), ("Cases", "@Cases"), ("City", "@City")],
+        tooltips=[
+            ("Date", "@formatted_date"),
+            ("Cases", "@Cases"),
+            ("City", "@City"),
+        ],
         title="Daily Cases by %s" % title,
     )
     tsp_cases.plot(grouping)
@@ -259,7 +264,9 @@ def plot_time_series(ts_cases_data, ts_new_case_data, grouping="Zip"):
     """
 
     callback = CustomJS(
-        args=dict(cases_lines=tsp_cases.lines, new_cases_lines=tsp_new_cases.lines),
+        args=dict(
+            cases_lines=tsp_cases.lines, new_cases_lines=tsp_new_cases.lines
+        ),
         code=code,
     )
     select = Select(title=title, options=options, value=default)
