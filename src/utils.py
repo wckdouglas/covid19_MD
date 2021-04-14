@@ -9,8 +9,13 @@ import numpy as np
 import pandas as pd
 import geopandas as gpd
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("Data collector")
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s || %(levelname)s  || %(name)s || %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger("COVID19")
 cwd = os.path.dirname(os.path.abspath(__file__))
 
 

@@ -1,7 +1,7 @@
 import os
 import sys
 import datetime
-import logging
+
 import pandas as pd
 import geopandas as gpd
 import numpy as np
@@ -9,10 +9,9 @@ from bokeh.layouts import column
 from bokeh.io import output_file, save
 from bokeh.models.widgets import Tabs, Panel
 from .plotting import plot_map, plot_time_series
-from .utils import Data, markdown_html, get_data
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("Update plot")
+from .utils import Data, markdown_html, get_data, logger
+
 today = datetime.date.today()
 
 

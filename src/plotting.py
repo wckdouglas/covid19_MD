@@ -1,4 +1,5 @@
 import math
+
 from bokeh.models import (
     ColorBar,
     ColumnDataSource,
@@ -11,10 +12,7 @@ from bokeh.models import (
 from bokeh.layouts import column
 from bokeh.palettes import Viridis256
 from bokeh.plotting import figure
-import logging
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("Interactive plots")
+from .utils import logger
 
 
 def plot_map(map_df, with_zip=True, today=None):

@@ -1,11 +1,7 @@
 import re
 import sys
-import logging
 import geopandas as gpd
-from .utils import Data
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("Get")
+from .utils import Data, logger
 
 
 def parse_date(date):
