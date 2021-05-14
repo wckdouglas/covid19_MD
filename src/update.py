@@ -109,7 +109,10 @@ def update(args, get_app=False):
         child=column(city_ts_plot, city_map_plot, sizing_mode="stretch_both"),
         title="By City",
     )
+    City_panel.sizing_mode = 'scale_width'
+    Zip_panel.sizing_mode = 'scale_width'
     dashboard = Tabs(tabs=[Zip_panel, City_panel])
+
 
     # p = column(ts_plot, city_ts_plot, map_plot)
     if not get_app:
