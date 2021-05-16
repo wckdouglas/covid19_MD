@@ -17,6 +17,7 @@ requests = "^2.25.1"
 tqdm = "^4.57.0"
 pytest = "^6.2.2"
 html5lib = "^1.0.1"
+luigi = "^3.0.3"
 
 [tool.poetry.dev-dependencies]
 pytest-cov = "^2.11.1"
