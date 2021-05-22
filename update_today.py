@@ -21,6 +21,9 @@ TODAY = date.today()
 
 
 class GetData(luigi.Task):
+    '''
+    For a given date (e.g. "2021-05-01"), retrieve data and save it to data/
+    '''
     day = luigi.Parameter()
 
     def output(self):
@@ -34,11 +37,16 @@ class GetData(luigi.Task):
 
 
 class SyncRepo(luigi.Task):
+    """
+    1. git pull
+    2. git add the newly added file in data/
+    3. git push 
+    """
     def output(self):
         return MockTarget("git_dashboard", mirror_on_stderr=True)
 
     def requires(self):
-        return [GetData(day=str(day)) for day in daterange(FIRST_DAY, TODAY)]
+        return [GetData(day=str(day)) for day in date_range(FIRST_DAY, TODAY)]
 
     def run(self):
         subprocess.call(["git", "pull"])
@@ -51,6 +59,11 @@ class SyncRepo(luigi.Task):
 
 
 class UpdateDashboard(luigi.Task):
+    """
+    refresh the dash board 
+
+    :param force (bool): remove the existing dashboard.html and rerun this step
+    """
     force = luigi.BoolParameter(default=False)
     output_file = "dashboard.html"
     if force:
@@ -72,6 +85,9 @@ class UpdateDashboard(luigi.Task):
 
 
 class WebSitePull(luigi.Task):
+    """
+    git pull the website repo
+    """
     def output(self):
         return MockTarget("git_pull", mirror_on_stderr=True)
 
@@ -83,6 +99,11 @@ class WebSitePull(luigi.Task):
 
 
 class UpdateWebSite(luigi.Task):
+    """
+    copy the newly made dashboard.html to website repo
+
+    :param force (bool): remove the dashboard html file from website repo for rerunning
+    """
     force = luigi.BoolParameter(default=False)
     output_file = WEB_DIR + "/_includes/COVID.html"
     if force:
@@ -119,7 +140,7 @@ class PushWebSite(luigi.Task):
             print(cmd, file=out)
 
 
-def daterange(date1, date2):
+def date_range(date1, date2):
     """
     copy from https://www.w3resource.com/python-exercises/date-time-exercise/python-date-time-exercise-50.php
 
