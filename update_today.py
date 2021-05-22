@@ -112,10 +112,11 @@ class PushWebSite(luigi.Task):
 
     def run(self):
         cmd = 'git commit -am "updated {}"'.format(TODAY)
+        os.chdir(WEB_DIR)
         subprocess.call(shlex.split(cmd))
         subprocess.call(["git", "push"])
         with self.output().open("w") as out:
-            print("cmd", file=out)
+            print(cmd, file=out)
 
 
 def daterange(date1, date2):
