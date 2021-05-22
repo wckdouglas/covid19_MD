@@ -53,8 +53,8 @@ def plot_map(map_df, with_zip=True, today=None):
 
     p = figure(
         title=title,
-        plot_height=400,
-        plot_width=800,
+        plot_height=800,
+        plot_width=1200,
         toolbar_location="below",
         tools="box_zoom, reset",
     )
@@ -137,8 +137,8 @@ class TSplot:
             y_axis_label=self.ylabel,
             title=title,
             tools="box_zoom,reset",
-            plot_width=800,
-            plot_height=400,
+            plot_width=1200,
+            plot_height=800,
             y_range=(0, self.ts_data[y].max()),
             x_range=(self.ts_data.Date.min(), self.ts_data.Date.max()),
         )
