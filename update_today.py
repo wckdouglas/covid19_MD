@@ -17,7 +17,7 @@ logging.basicConfig(
 logger = logging.getLogger("Update")
 
 FILE = Path(__file__).absolute()
-WORKING_DIR = os.path.dirname(FILE)
+WORKING_DIR = FILE.parent
 WEB_DIR = WORKING_DIR.parent / "wckdouglas.github.io"
 FIRST_DAY = date(2020, 4, 12)
 TODAY = date.today()
