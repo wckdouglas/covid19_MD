@@ -3,6 +3,7 @@ from datetime import date, timedelta
 import subprocess
 import shlex
 import logging
+from git import Repo
 
 import luigi
 from luigi.mock import MockTarget
@@ -21,10 +22,14 @@ TODAY = date.today()
 
 
 class GetData(luigi.Task):
-    '''
+    """
     For a given date (e.g. "2021-05-01"), retrieve data and save it to data/
-    '''
+    """
+
     day = luigi.Parameter()
+
+    def rquires(self):
+        return [CovidPull()]
 
     def output(self):
         return luigi.LocalTarget(WORKING_DIR + "/data/{}.tsv".format(self.day))
@@ -36,12 +41,23 @@ class GetData(luigi.Task):
             subprocess.run(shlex.split(cmd), stdout=out)
 
 
+class CovidPull(luigi.Task):
+    def output(self):
+        return MockTarget("git_pull_covid", mirror_on_stderr=True)
+
+    def run(self):
+        git_sync(WORKING_DIR, action="pull")
+
+        with self.output().open("w") as out:
+            print('git pulled covid', file=out)
+
+
 class SyncRepo(luigi.Task):
     """
-    1. git pull
     2. git add the newly added file in data/
-    3. git push 
+    3. git push
     """
+
     def output(self):
         return MockTarget("git_dashboard", mirror_on_stderr=True)
 
@@ -49,24 +65,28 @@ class SyncRepo(luigi.Task):
         return [GetData(day=str(day)) for day in date_range(FIRST_DAY, TODAY)]
 
     def run(self):
-        subprocess.call(["git", "pull"])
-        for task in self.requires():
-            subprocess.call(shlex.split("git add {}".format(task.output().path)))
-            logger.debug("Added {}".format(task.output().path))
-        subprocess.call(["git", "push"])
+        with Repo(WORKING_DIR) as repo:
+            index = repo.index
+            for task in self.requires():
+                index.add(task.output().path)
+                logger.debug("Added {}".format(task.output().path))
+            index.commit('Added %s' %task.output().path)
+        git_sync(WORKING_DIR, action="push")
+
         with self.output().open("w") as out:
-            print("git_pull", file=out)
+            print("git_push", file=out)
 
 
 class UpdateDashboard(luigi.Task):
     """
-    refresh the dash board 
+    refresh the dash board
 
     :param force (bool): remove the existing dashboard.html and rerun this step
     """
+
     force = luigi.BoolParameter(default=False)
     output_file = "dashboard.html"
-    if force:
+    if force and os.path.isfile(output_file):
         os.remove(output_file)
 
     def requires(self):
@@ -88,14 +108,15 @@ class WebSitePull(luigi.Task):
     """
     git pull the website repo
     """
+
     def output(self):
-        return MockTarget("git_pull", mirror_on_stderr=True)
+        return MockTarget("git_pull_website", mirror_on_stderr=True)
 
     def run(self):
-        os.chdir(WEB_DIR)
-        subprocess.call(["git", "pull"])
+        git_sync(WEB_DIR, action="pull")
+
         with self.output().open("w") as out:
-            print("git pull", file=out)
+            print("git pull website", file=out)
 
 
 class UpdateWebSite(luigi.Task):
@@ -104,9 +125,10 @@ class UpdateWebSite(luigi.Task):
 
     :param force (bool): remove the dashboard html file from website repo for rerunning
     """
+
     force = luigi.BoolParameter(default=False)
     output_file = WEB_DIR + "/_includes/COVID.html"
-    if force:
+    if force and os.path.isfile(output_file):
         os.remove(output_file)
 
     def requires(self):
@@ -132,12 +154,12 @@ class PushWebSite(luigi.Task):
         return MockTarget("git_push", mirror_on_stderr=True)
 
     def run(self):
-        cmd = 'git commit -am "updated {}"'.format(TODAY)
         os.chdir(WEB_DIR)
-        subprocess.call(shlex.split(cmd))
-        subprocess.call(["git", "push"])
+        with Repo(WEB_DIR) as web_repo:
+            web_repo.index.commit("Updated {}".format(TODAY))
+        git_sync(WEB_DIR, action="push")
         with self.output().open("w") as out:
-            print(cmd, file=out)
+            print("pushed website", file=out)
 
 
 def date_range(date1, date2):
@@ -151,10 +173,32 @@ def date_range(date1, date2):
         yield date1 + timedelta(n)
 
 
+def git_sync(dir: str, action: str = "pull"):
+    """
+    do a git pull in the give directory
+
+    :param dir (str): a git directory
+    :param action (str): {'pull','push'}
+    """
+
+    assert action in {"pull", "pueh"}
+    with Repo(dir) as repo:
+        for remote in repo.remoates:
+            if remote.name == "origin":
+                if action == "pull":
+                    remote.pull()
+                else:
+                    remote.push()
+                logger.info("git {} {}".format(action, dir))
+
+
 if __name__ == "__main__":
+
     luigi.build(
         [PushWebSite(force=True)],
         local_scheduler=True,
         log_level="INFO",
         workers=4,
+        detailed_summary=True,
+        scheduler_port=2020,
     )
