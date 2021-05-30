@@ -3,6 +3,7 @@ from datetime import date, timedelta
 import subprocess
 import shlex
 import logging
+from pathlib import Path
 from git import Repo
 
 import luigi
@@ -15,8 +16,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger("Update")
 
-WORKING_DIR = os.path.dirname(os.path.abspath(__file__))
-WEB_DIR = os.path.dirname(WORKING_DIR) + "/wckdouglas.github.io"
+FILE = Path(__file__).absolute()
+WORKING_DIR = os.path.dirname(FILE)
+WEB_DIR = WORKING_DIR.parent / "wckdouglas.github.io"
 FIRST_DAY = date(2020, 4, 12)
 TODAY = date.today()
 
@@ -32,7 +34,7 @@ class GetData(luigi.Task):
         return [CovidPull()]
 
     def output(self):
-        return luigi.LocalTarget(WORKING_DIR + "/data/{}.tsv".format(self.day))
+        return luigi.LocalTarget(WORKING_DIR / "data/{}.tsv".format(self.day))
 
     def run(self):  # work if SGE
         cmd = "python dashboard.py get --date {}".format(self.day)
@@ -42,6 +44,9 @@ class GetData(luigi.Task):
 
 
 class CovidPull(luigi.Task):
+    """
+    git pull the covid data repo
+    """
     def output(self):
         return MockTarget("git_pull_covid", mirror_on_stderr=True)
 
@@ -68,8 +73,9 @@ class SyncRepo(luigi.Task):
         with Repo(WORKING_DIR) as repo:
             index = repo.index
             for task in self.requires():
-                index.add(task.output().path)
-                logger.debug("Added {}".format(task.output().path))
+                if os.stat(task.output().path).st_size > 0:
+                    index.add(task.output().path)
+                    logger.info("Added {}".format(task.output().path))
             index.commit('Added %s' %task.output().path)
         git_sync(WORKING_DIR, action="push")
 
@@ -127,7 +133,7 @@ class UpdateWebSite(luigi.Task):
     """
 
     force = luigi.BoolParameter(default=False)
-    output_file = WEB_DIR + "/_includes/COVID.html"
+    output_file = WEB_DIR  / "_includes/COVID.html"
     if force and os.path.isfile(output_file):
         os.remove(output_file)
 
@@ -181,9 +187,9 @@ def git_sync(dir: str, action: str = "pull"):
     :param action (str): {'pull','push'}
     """
 
-    assert action in {"pull", "pueh"}
+    assert action in {"pull", "push"}
     with Repo(dir) as repo:
-        for remote in repo.remoates:
+        for remote in repo.remotes:
             if remote.name == "origin":
                 if action == "pull":
                     remote.pull()
@@ -196,7 +202,7 @@ if __name__ == "__main__":
 
     luigi.build(
         [PushWebSite(force=True)],
-        local_scheduler=True,
+        local_scheduler=False,
         log_level="INFO",
         workers=4,
         detailed_summary=True,
