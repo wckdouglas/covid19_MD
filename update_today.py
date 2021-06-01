@@ -202,7 +202,7 @@ if __name__ == "__main__":
 
     luigi.build(
         [PushWebSite(force=True)],
-        local_scheduler=False,
+        local_scheduler=True,
         log_level="INFO",
         workers=4,
         detailed_summary=True,
