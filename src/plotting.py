@@ -13,8 +13,8 @@ from bokeh.layouts import column
 from bokeh.palettes import Viridis256
 from bokeh.plotting import figure
 from .utils import logger
-PLOT_WIDTH = 1000
-PLOT_HEIGHT = 500
+PLOT_WIDTH = 1600
+PLOT_HEIGHT = 800
 
 
 def plot_map(map_df, with_zip=True, today=None):
