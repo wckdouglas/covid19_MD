@@ -13,6 +13,8 @@ from bokeh.layouts import column
 from bokeh.palettes import Viridis256
 from bokeh.plotting import figure
 from .utils import logger
+PLOT_WIDTH = 1000
+PLOT_HEIGHT = 500
 
 
 def plot_map(map_df, with_zip=True, today=None):
@@ -53,8 +55,8 @@ def plot_map(map_df, with_zip=True, today=None):
 
     p = figure(
         title=title,
-        plot_height=800,
-        plot_width=1200,
+        plot_width=PLOT_WIDTH,
+        plot_height=PLOT_HEIGHT,
         toolbar_location="below",
         tools="box_zoom, reset",
     )
@@ -137,8 +139,8 @@ class TSplot:
             y_axis_label=self.ylabel,
             title=title,
             tools="box_zoom,reset",
-            plot_width=1200,
-            plot_height=800,
+            plot_width=PLOT_WIDTH,
+            plot_height=PLOT_HEIGHT,
             y_range=(0, self.ts_data[y].max()),
             x_range=(self.ts_data.Date.min(), self.ts_data.Date.max()),
         )

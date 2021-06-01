@@ -204,7 +204,6 @@ class Data:
 
 def markdown_html(html_file, out_file):
     with open(html_file) as html, open(out_file, "w") as out_html:
-        out = 1
         outline = 0
         inline = 0
         for line in html:
@@ -246,7 +245,6 @@ def get_data(
             per_population=lambda d: d.Cases * 1e6 / d.Population.astype(int)
         )
     )
-    today = str(total_case_data.Date.astype(str).unique()[0])
 
     per_day_increase_data = (
         data.groupby(["Zip"], as_index=False)

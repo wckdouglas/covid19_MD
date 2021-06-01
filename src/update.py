@@ -8,7 +8,7 @@ import numpy as np
 from bokeh.layouts import column
 from bokeh.io import output_file, save
 from bokeh.models.widgets import Tabs, Panel
-from .plotting import plot_map, plot_time_series
+from .plotting import plot_map, plot_time_series, PLOT_WIDTH
 
 from .utils import Data, markdown_html, get_data, logger
 
@@ -109,7 +109,7 @@ def update(args, get_app=False):
         child=column(city_ts_plot, city_map_plot, sizing_mode="stretch_both"),
         title="By City",
     )
-    dashboard = Tabs(tabs=[Zip_panel, City_panel])
+    dashboard = Tabs(tabs=[Zip_panel, City_panel], width = PLOT_WIDTH, height_policy="fit",width_policy="fixed")
 
 
     # p = column(ts_plot, city_ts_plot, map_plot)
