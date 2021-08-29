@@ -1,12 +1,12 @@
-import os
-from datetime import date, timedelta
-import subprocess
-import shlex
 import logging
+import os
+import shlex
+import subprocess
+from datetime import date, timedelta
 from pathlib import Path
-from git import Repo
 
 import luigi
+from git import Repo
 from luigi.mock import MockTarget
 
 logging.basicConfig(
@@ -47,6 +47,7 @@ class CovidPull(luigi.Task):
     """
     git pull the covid data repo
     """
+
     def output(self):
         return MockTarget("git_pull_covid", mirror_on_stderr=True)
 
@@ -54,7 +55,7 @@ class CovidPull(luigi.Task):
         git_sync(WORKING_DIR, action="pull")
 
         with self.output().open("w") as out:
-            print('git pulled covid', file=out)
+            print("git pulled covid", file=out)
 
 
 class SyncRepo(luigi.Task):
@@ -76,7 +77,7 @@ class SyncRepo(luigi.Task):
                 if os.stat(task.output().path).st_size > 0:
                     index.add(task.output().path)
                     logger.info("Added {}".format(task.output().path))
-            index.commit('Added %s' %task.output().path)
+            index.commit("Added %s" % task.output().path)
         git_sync(WORKING_DIR, action="push")
 
         with self.output().open("w") as out:
@@ -133,7 +134,7 @@ class UpdateWebSite(luigi.Task):
     """
 
     force = luigi.BoolParameter(default=False)
-    output_file = WEB_DIR  / "_includes/COVID.html"
+    output_file = WEB_DIR / "_includes/COVID.html"
     if force and os.path.isfile(output_file):
         os.remove(output_file)
 
@@ -162,6 +163,7 @@ class PushWebSite(luigi.Task):
     def run(self):
         os.chdir(WEB_DIR)
         with Repo(WEB_DIR) as web_repo:
+            web_repo.index.add(self.requires()[0].output().path)
             web_repo.index.commit("Updated {}".format(TODAY))
         git_sync(WEB_DIR, action="push")
         with self.output().open("w") as out:

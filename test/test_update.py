@@ -3,9 +3,11 @@
 import os
 import sys
 
-sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
-from src.update import update, check_update
 import pytest
+
+from src.update import check_update, update
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
 
 class run_args:

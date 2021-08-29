@@ -1,20 +1,16 @@
 import math
 
-from bokeh.models import (
-    ColorBar,
-    ColumnDataSource,
-    CustomJS,
-    GeoJSONDataSource,
-    HoverTool,
-    Select,
-    LinearColorMapper,
-)
 from bokeh.layouts import column
+from bokeh.models import (ColorBar, ColumnDataSource, CustomJS,
+                          GeoJSONDataSource, HoverTool, LinearColorMapper,
+                          Select)
 from bokeh.palettes import Viridis256
 from bokeh.plotting import figure
+
 from .utils import logger
+
 PLOT_WIDTH = 1600
-PLOT_HEIGHT = 800
+PLOT_HEIGHT = 1000
 
 
 def plot_map(map_df, with_zip=True, today=None):

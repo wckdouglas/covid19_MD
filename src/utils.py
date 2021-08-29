@@ -1,14 +1,15 @@
 import glob
+import logging
 import os
 import sys
-import requests
-import logging
-from tqdm import tqdm
-from bs4 import BeautifulSoup
+from enum import Enum
+
+import geopandas as gpd
 import numpy as np
 import pandas as pd
-import geopandas as gpd
-
+import requests
+from bs4 import BeautifulSoup
+from tqdm import tqdm
 
 logging.basicConfig(
     level=logging.INFO,
@@ -23,22 +24,39 @@ class COVIDerror(Exception):
     pass
 
 
+class DataUrls(Enum):
+    zip_to_city_broken = (
+        "https://public.opendatasoft.com/explore/dataset/us-zip-code-latitude-and-longitude"
+        "/download/?format=csv&timezone=America/New_York"
+        "&lang=en&use_labels_for_header=true&csv_separator=%3B"
+    )
+    zip_to_city = (
+        "https://public.opendatasoft.com/explore/dataset"
+        "/georef-united-states-of-america-zc-point/download"
+        "/?format=csv&timezone=America/New_York&lang=en&use_labels_for_header=true&csv_separator=%3B"
+    )
+    maryland_zip_population = (
+        "https://www.maryland-demographics.com/zip_codes_by_population"
+    )
+    geoshape = (
+        "https://www2.census.gov/geo/tiger/TIGER2019/ZCTA5/tl_2019_us_zcta510.zip"
+    )
+    zip_covid_data_old = "https://opendata.arcgis.com/datasets/5f459467ee7a4ffda968139011f06c46_0.geojson"
+    zip_covid_data = (
+        "https://services.arcgis.com/njFNhDsUCentVYJW/arcgis/rest/services/MDCOVID19_MASTER_ZIP_CODE_CASES"
+        "/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json"
+    )
+
+
 class Data:
     def __init__(self, state="MD", datadir="./data"):
         # data and URL path
         self.state = state
         self.data_path = datadir
-        self.zip_map_url = (
-            "https://public.opendatasoft.com/explore/dataset/us-zip-code-latitude-and-longitude"
-            "/download/?format=csv&timezone=America/New_York"
-            "&lang=en&use_labels_for_header=true&csv_separator=%3B"
-        )
-        self.population_url = (
-            "https://www.maryland-demographics.com/zip_codes_by_population"
-        )
-        self.geo_shape_url = "https://www2.census.gov/geo/tiger/TIGER2019/ZCTA5/tl_2019_us_zcta510.zip"
-        self.MD_zip_data_url = "https://opendata.arcgis.com/datasets/5f459467ee7a4ffda968139011f06c46_0.geojson"
-        self.MD_zip_data_url = "https://services.arcgis.com/njFNhDsUCentVYJW/arcgis/rest/services/MDCOVID19_MASTER_ZIP_CODE_CASES/FeatureServer/0/query?where=1%3D1&outFields=*&outSR=4326&f=json"
+        self.zip_map_url = DataUrls.zip_to_city.value
+        self.population_url = DataUrls.maryland_zip_population.value
+        self.geo_shape_url = DataUrls.geoshape.value
+        self.MD_zip_data_url = DataUrls.zip_covid_data.value
 
         # actual reading dat
         self.geo = None
@@ -124,11 +142,7 @@ class Data:
                 )
             )
             .assign(Date=lambda d: pd.to_datetime(d.Date, format="%m_%d_%Y"))
-            .assign(
-                ZIP_CODE=lambda d: d.ZIP_CODE.where(
-                    d.ZIP_CODE != "21802", "21804"
-                )
-            )
+            .assign(ZIP_CODE=lambda d: d.ZIP_CODE.where(d.ZIP_CODE != "21802", "21804"))
             .groupby(["ZIP_CODE", "Date"], as_index=False)
             .agg({"Cases": "sum"})
             .assign(ZIP_CODE=lambda d: d.ZIP_CODE.astype(int))
@@ -156,12 +170,9 @@ class Data:
                 names=["Zip", "Cases"],
                 sep="\t",
                 dtype={"Zip": "Int64", "Cases": "str"},
-            ).assign(
-                Cases=lambda d: d.Cases.str.replace(" Cases", "").astype(int)
-            )
+            ).assign(Cases=lambda d: d.Cases.str.replace(" Cases", "").astype(int))
         self.zip_covid = pd.concat(
-            date_data.assign(Date=date)
-            for date, date_data in covid_data.items()
+            date_data.assign(Date=date) for date, date_data in covid_data.items()
         ).assign(Date=lambda d: pd.to_datetime(d.Date, format="%Y-%m-%d"))
         logger.info("Loaded daily COVID cases (%i days)" % (i + 1))
 
@@ -169,8 +180,17 @@ class Data:
         """
         zip city information
         """
-        self.zip_map = pd.read_csv(self.zip_map_url, sep=";").query(
-            'State == "%s"' % self.state
+        self.zip_map = (
+            pd.read_csv(self.zip_map_url, sep=";")
+            .rename(
+                columns={
+                    "Zip Code": "Zip",
+                    "Official USPS city name": "City",
+                    "Official USPS State Code": "State",
+                }
+            )
+            .query('State == "%s"' % self.state)
+            .filter(["Zip", "City", "State"])
         )
         logger.info("Retrieved map info")
 
@@ -211,9 +231,7 @@ def markdown_html(html_file, out_file):
             if not "<!DOCTYPE html>" in line.strip():
                 outline += 1
                 print(line.strip(), file=out_html)
-    logger.info(
-        "Written %i lines from %i lines to %s" % (outline, inline, out_file)
-    )
+    logger.info("Written %i lines from %i lines to %s" % (outline, inline, out_file))
 
 
 def get_data(
@@ -232,18 +250,14 @@ def get_data(
             on="Zip",
         )
         .assign(Date=lambda d: d.Date.fillna(d.Date.max()))
-        .filter(
-            ["Zip", "City", "State", "Cases", "Date", "geometry", "Population"]
-        )
+        .filter(["Zip", "City", "State", "Cases", "Date", "geometry", "Population"])
     )
 
     total_case_data = (
         data.pipe(lambda d: d[d.Date == d.Date.max()])
         .assign(Cases=lambda d: d.Cases.fillna(0))
         .pipe(lambda d: d[~pd.isnull(d.geometry)])
-        .assign(
-            per_population=lambda d: d.Cases * 1e6 / d.Population.astype(int)
-        )
+        .assign(per_population=lambda d: d.Cases * 1e6 / d.Population.astype(int))
     )
 
     per_day_increase_data = (
@@ -252,24 +266,18 @@ def get_data(
             lambda d: d.nlargest(2, "Date")
             .assign(increase=lambda d: d.Cases.max() - d.Cases.min())
             .assign(
-                increase=lambda d: np.where(
-                    pd.isnull(d.increase), d.Cases, d.increase
-                )
+                increase=lambda d: np.where(pd.isnull(d.increase), d.Cases, d.increase)
             )
             .assign(increase=lambda d: d.increase.fillna(0))
             .pipe(lambda d: d[d.Date == d.Date.max()])
         )
         .pipe(lambda d: d[~pd.isnull(d.geometry)])
-        .assign(
-            per_population=lambda d: d.Cases / d.Population.astype(int) * 1e6
-        )
+        .assign(per_population=lambda d: d.Cases / d.Population.astype(int) * 1e6)
         .assign(Date=lambda d: d.Date.astype(str))
     )
 
     ts_data = (
-        maryland.zip_covid.merge(
-            maryland.zip_map.filter(["Zip", "City"]), on="Zip"
-        )
+        maryland.zip_covid.merge(maryland.zip_map.filter(["Zip", "City"]), on="Zip")
         .groupby(["Zip", "City"], as_index=False)
         .apply(
             lambda d: d.sort_values("Date").assign(

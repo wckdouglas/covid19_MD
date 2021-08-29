@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
-from src.update import update, check_update
-from src.download import get
 import argparse
+
+from src.download import get
+from src.update import check_update, update
 
 
 def get_opt():

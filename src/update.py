@@ -1,16 +1,16 @@
+import datetime
 import os
 import sys
-import datetime
 
-import pandas as pd
 import geopandas as gpd
 import numpy as np
-from bokeh.layouts import column
+import pandas as pd
 from bokeh.io import output_file, save
-from bokeh.models.widgets import Tabs, Panel
-from .plotting import plot_map, plot_time_series, PLOT_WIDTH, PLOT_HEIGHT
+from bokeh.layouts import column
+from bokeh.models.widgets import Panel, Tabs
 
-from .utils import Data, markdown_html, get_data, logger
+from .plotting import PLOT_HEIGHT, PLOT_WIDTH, plot_map, plot_time_series
+from .utils import Data, get_data, logger, markdown_html
 
 today = datetime.date.today()
 
@@ -108,7 +108,7 @@ def update(args, get_app=False):
         width=PLOT_WIDTH,
         height_policy="fixed",
         width_policy="fixed",
-        height=3 * PLOT_HEIGHT,
+        height= int(1.1 * (3 * PLOT_HEIGHT)),
     )
 
     # p = column(ts_plot, city_ts_plot, map_plot)
