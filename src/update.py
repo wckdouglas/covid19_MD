@@ -114,11 +114,8 @@ def update(args, get_app=False):
     # p = column(ts_plot, city_ts_plot, map_plot)
     if not get_app:
         html_file = args.out_html
-        COVID_HTML = "../wckdouglas.github.io/_includes/COVID.html"
         output_file(html_file)
         save(dashboard)
-        if os.path.isfile(COVID_HTML):
-            markdown_html(html_file, COVID_HTML)
     else:
         return dashboard
 

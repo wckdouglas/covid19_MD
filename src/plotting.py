@@ -15,8 +15,11 @@ from bokeh.plotting import figure
 
 from .utils import logger
 
-PLOT_WIDTH = 1600
-PLOT_HEIGHT = 1000
+PLOT_WIDTH = 1000
+PLOT_HEIGHT = 700
+COLORBAR_WIDTH = 400
+COLORBAR_HEIGHT = 20
+TEXT_SIZE_PTS = "25pt"
 
 
 def plot_map(map_df, with_zip=True, today=None):
@@ -63,7 +66,7 @@ def plot_map(map_df, with_zip=True, today=None):
     p.xgrid.grid_line_color = None
     p.ygrid.grid_line_color = None
     p.axis.visible = False
-    p.title.text_font_size = "25pt"
+    p.title.text_font_size = TEXT_SIZE_PTS
 
     # Add patch renderer to figure.
     state_map = p.patches(
@@ -115,8 +118,8 @@ def plot_map(map_df, with_zip=True, today=None):
     color_bar = ColorBar(
         color_mapper=color_mapper,
         label_standoff=8,
-        width=400,
-        height=20,
+        width=COLORBAR_WIDTH,
+        height=COLORBAR_HEIGHT,
         major_label_text_font_size="16px",
         major_tick_line_width=3,
         border_line_color=None,
@@ -146,15 +149,15 @@ class TSplot:
         )
         self.p.xgrid.grid_line_color = None
         self.p.ygrid.grid_line_color = None
-        self.p.title.text_font_size = "25pt"
+        self.p.title.text_font_size = TEXT_SIZE_PTS
         self.p.xaxis[0].ticker.desired_num_ticks = 10
         self.p.xaxis.major_label_orientation = math.pi / 3
         self.p.xaxis.axis_label = "Date"
         self.p.yaxis.axis_label = ylabel
-        self.p.xaxis.axis_label_text_font_size = "25pt"
-        self.p.xaxis.major_label_text_font_size = "25pt"
-        self.p.yaxis.axis_label_text_font_size = "25pt"
-        self.p.yaxis.major_label_text_font_size = "25pt"
+        self.p.xaxis.axis_label_text_font_size = TEXT_SIZE_PTS
+        self.p.xaxis.major_label_text_font_size = TEXT_SIZE_PTS
+        self.p.yaxis.axis_label_text_font_size = TEXT_SIZE_PTS
+        self.p.yaxis.major_label_text_font_size = TEXT_SIZE_PTS
         self.p.xaxis.major_label_orientation = math.pi / 3
         logger.info("Initialized ts plot")
 
