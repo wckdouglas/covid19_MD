@@ -108,7 +108,7 @@ def update(args, get_app=False):
         width=PLOT_WIDTH,
         height_policy="fixed",
         width_policy="fixed",
-        height= int(1.1 * (3 * PLOT_HEIGHT)),
+        height=int(1.1 * (3 * PLOT_HEIGHT)),
     )
 
     # p = column(ts_plot, city_ts_plot, map_plot)
