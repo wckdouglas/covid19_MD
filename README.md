@@ -49,6 +49,7 @@ git clone git@github.com:wckdouglas/covid19_MD.git
 cd covid_MD
 poetry install
 poetry run python dashboard.py update -o /data/dashboard.html
+```
 
 ## Daily update ##
 
