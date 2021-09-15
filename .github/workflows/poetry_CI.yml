@@ -38,6 +38,7 @@ jobs:
       - name: Test with pytest
         run: |
           poetry run coverage run -m pytest -l  -rPap -vvv -p no:warnings
+          poetry run coverage xml
 
       - name: codecov
         run: |
