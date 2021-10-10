@@ -103,11 +103,9 @@ class UpdateDashboard(luigi.Task):
         return luigi.LocalTarget(self.output_file)
 
     def run(self):
-        update_cmd = """
-            python dashboard.py update -o {} --datadir data
-        """.format(
-            self.output().path
-        )
+        logger.info('run here')
+        update_cmd = f"poetry run python dashboard.py update -o {self.output().path} --datadir data 2>&1 |tee dashboard.log"
+        logger.info(f"Running: {update_cmd}")
         subprocess.call(shlex.split(update_cmd))
 
 
@@ -204,7 +202,7 @@ if __name__ == "__main__":
 
     luigi.build(
         [PushWebSite(force=True)],
-        local_scheduler=True,
+        local_scheduler=False,
         log_level="INFO",
         workers=4,
         detailed_summary=True,
