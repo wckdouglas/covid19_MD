@@ -49,8 +49,9 @@ class CovidPull(luigi.Task):
     """
     git pull the covid data repo
     """
+
     force = luigi.BoolParameter(default=False)
-    output_file = "git_pull_covid"
+    output_file = WEB_DIR / "git_pull_covid"
     if force and os.path.isfile(output_file):
         os.remove(output_file)
 
@@ -60,7 +61,7 @@ class CovidPull(luigi.Task):
     def run(self):
         git_sync(WORKING_DIR, action="pull")
 
-        with self.output().open('w') as out:
+        with self.output().open("w") as out:
             print("git pulled covid", file=out)
 
 
@@ -69,8 +70,9 @@ class SyncRepo(luigi.Task):
     2. git add the newly added file in data/
     3. git push
     """
-    force=luigi.BoolParameter(default=False)
-    output_file = "git_dashboard_sync"
+
+    force = luigi.BoolParameter(default=False)
+    output_file = WEB_DIR / "git_dashboard_sync"
     if force and os.path.isfile(output_file):
         os.remove(output_file)
 
@@ -78,8 +80,10 @@ class SyncRepo(luigi.Task):
         return luigi.LocalTarget(self.output_file)
 
     def requires(self):
-        return [CovidPull(force=self.force)]
-        #return [GetData(day=str(day), force=self.force) for day in date_range(FIRST_DAY, TODAY)]
+        return [
+            GetData(day=str(day), force=self.force)
+            for day in date_range(FIRST_DAY, TODAY)
+        ]
 
     def run(self):
 
@@ -94,7 +98,6 @@ class SyncRepo(luigi.Task):
 
         with open(self.output().path, "w") as out:
             print("git_push", file=out)
-
 
 
 class UpdateDashboard(luigi.Task):
@@ -116,7 +119,7 @@ class UpdateDashboard(luigi.Task):
         return luigi.LocalTarget(self.output_file)
 
     def run(self):
-        logger.info('run here')
+        logger.info("run here")
         update_cmd = f"poetry run python dashboard.py update -o {self.output().path} --datadir data"
         logger.info(f"Running: {update_cmd}")
         subprocess.call(shlex.split(update_cmd))
@@ -164,7 +167,7 @@ class UpdateWebSite(luigi.Task):
 
 class PushWebSite(luigi.Task):
     force = luigi.BoolParameter(default=False)
-    output_file = "git_push"
+    output_file = WEB_DIR / "git_push"
     if force and os.path.isfile(output_file):
         os.remove(output_file)
 
