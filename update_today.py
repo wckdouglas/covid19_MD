@@ -7,6 +7,7 @@ from pathlib import Path
 
 import luigi
 from git import Repo
+from luigi.local_target import LocalTarget
 from luigi.mock import MockTarget
 
 logging.basicConfig(
@@ -29,9 +30,10 @@ class GetData(luigi.Task):
     """
 
     day = luigi.Parameter()
+    force = luigi.BoolParameter(default=False)
 
     def rquires(self):
-        return [CovidPull()]
+        return [CovidPull(force=self.force)]
 
     def output(self):
         return luigi.LocalTarget(WORKING_DIR / "data/{}.tsv".format(self.day))
@@ -47,14 +49,18 @@ class CovidPull(luigi.Task):
     """
     git pull the covid data repo
     """
+    force = luigi.BoolParameter(default=False)
+    output_file = "git_pull_covid"
+    if force and os.path.isfile(output_file):
+        os.remove(output_file)
 
     def output(self):
-        return MockTarget("git_pull_covid", mirror_on_stderr=True)
+        return luigi.LocalTarget(self.output)
 
     def run(self):
         git_sync(WORKING_DIR, action="pull")
 
-        with self.output().open("w") as out:
+        with self.output().open('w') as out:
             print("git pulled covid", file=out)
 
 
@@ -63,14 +69,20 @@ class SyncRepo(luigi.Task):
     2. git add the newly added file in data/
     3. git push
     """
+    force=luigi.BoolParameter(default=False)
+    output_file = "git_dashboard_sync"
+    if force and os.path.isfile(output_file):
+        os.remove(output_file)
 
     def output(self):
-        return MockTarget("git_dashboard", mirror_on_stderr=True)
+        return luigi.LocalTarget(self.output_file)
 
     def requires(self):
-        return [GetData(day=str(day)) for day in date_range(FIRST_DAY, TODAY)]
+        return [CovidPull(force=self.force)]
+        #return [GetData(day=str(day), force=self.force) for day in date_range(FIRST_DAY, TODAY)]
 
     def run(self):
+
         with Repo(WORKING_DIR) as repo:
             index = repo.index
             for task in self.requires():
@@ -80,8 +92,9 @@ class SyncRepo(luigi.Task):
             index.commit("Added %s" % task.output().path)
         git_sync(WORKING_DIR, action="push")
 
-        with self.output().open("w") as out:
+        with open(self.output().path, "w") as out:
             print("git_push", file=out)
+
 
 
 class UpdateDashboard(luigi.Task):
@@ -97,14 +110,14 @@ class UpdateDashboard(luigi.Task):
         os.remove(output_file)
 
     def requires(self):
-        return [SyncRepo()]
+        return [SyncRepo(force=self.force)]
 
     def output(self):
         return luigi.LocalTarget(self.output_file)
 
     def run(self):
         logger.info('run here')
-        update_cmd = f"poetry run python dashboard.py update -o {self.output().path} --datadir data 2>&1 |tee dashboard.log"
+        update_cmd = f"poetry run python dashboard.py update -o {self.output().path} --datadir data"
         logger.info(f"Running: {update_cmd}")
         subprocess.call(shlex.split(update_cmd))
 
@@ -151,12 +164,15 @@ class UpdateWebSite(luigi.Task):
 
 class PushWebSite(luigi.Task):
     force = luigi.BoolParameter(default=False)
+    output_file = "git_push"
+    if force and os.path.isfile(output_file):
+        os.remove(output_file)
 
     def requires(self):
         return [UpdateWebSite(force=self.force)]
 
     def output(self):
-        return MockTarget("git_push", mirror_on_stderr=True)
+        return luigi.LocalTarget(self.output_file)
 
     def run(self):
         os.chdir(WEB_DIR)
@@ -202,9 +218,9 @@ if __name__ == "__main__":
 
     luigi.build(
         [PushWebSite(force=True)],
-        local_scheduler=False,
+        local_scheduler=True,
         log_level="INFO",
-        workers=4,
+        workers=1,
         detailed_summary=True,
         scheduler_port=2020,
     )
