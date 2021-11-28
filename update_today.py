@@ -61,8 +61,8 @@ class CovidPull(luigi.Task):
     def run(self):
         git_sync(WORKING_DIR, action="pull")
 
-        with self.output().open("w") as out:
-            print("git pulled covid", file=out)
+        with open(self.output().path, "w") as out:
+            print("git_pulled_covid", file=out)
 
 
 class SyncRepo(luigi.Task):
